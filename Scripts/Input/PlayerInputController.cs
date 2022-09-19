@@ -44,18 +44,10 @@ namespace Input
             {
                 Transform camTransform = Camera.main.transform;
                 Vector3 gravityDir = Physics.gravity.normalized;
-                Vector3 rightDir = Vector3.Cross(-gravityDir, camTransform.forward).normalized;
-                Vector3 forwardDir;
+                
                 float w = Vector3.Dot(-gravityDir, camTransform.forward);
-                if (w > -1f && w < 1f)
-                {
-                    forwardDir = Vector3.Cross(rightDir, -gravityDir).normalized;
-                }
-                else
-                {
-                    forwardDir = w < 0 ? camTransform.up : -camTransform.up;
-                    rightDir = camTransform.right;
-                }
+                Vector3 rightDir = w > -1f && w < 1f ? Vector3.Cross(-gravityDir, camTransform.forward).normalized : camTransform.right;
+                Vector3 forwardDir = Vector3.Cross(rightDir, -gravityDir).normalized;
 
                 Vector3 moveVector = rightDir * (_moveDirection.x * playerMoveSpeed) + forwardDir * (_moveDirection.y * playerMoveSpeed);
                 

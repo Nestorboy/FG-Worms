@@ -1,3 +1,4 @@
+using Input;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
@@ -7,7 +8,7 @@ using Vector3 = UnityEngine.Vector3;
 public class PlayerCamera : MonoBehaviour
 {
     [SerializeField] private float cameraMovementSpeed = 1f;
-    [SerializeField] private float cameraRotationSpeed = 10f;
+    [SerializeField] private float cameraRotationSpeed = 1f;
     [SerializeField] private Vector3 cameraOffset;
     [SerializeField] private Vector3 cameraPivot;
 
@@ -30,7 +31,10 @@ public class PlayerCamera : MonoBehaviour
     
     private void LateUpdate()
     {
-        _rotationOffsets += new Vector2(UnityEngine.Input.GetAxis("Mouse X"), -UnityEngine.Input.GetAxis("Mouse Y")) * cameraRotationSpeed;
+        Vector2 lookDirection = InputManager.GetInstance().inputLookDirection;
+        lookDirection.y = -lookDirection.y;
+        
+        _rotationOffsets += lookDirection * cameraRotationSpeed;
         _rotationOffsets.y = Mathf.Clamp(_rotationOffsets.y, -90f, 90f);
         
         Quaternion rotationOffset = Quaternion.Euler(_rotationOffsets.y, _rotationOffsets.x, 0);

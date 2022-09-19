@@ -10,6 +10,7 @@ namespace Input
         private static InputManager _instance;
         
         private Vector2 _inputMoveDirection;
+        public Vector2 inputLookDirection;
         
         private void Awake()
         {
@@ -32,7 +33,7 @@ namespace Input
 
         public void Look(InputAction.CallbackContext context)
         {
-            _inputMoveDirection = context.ReadValue<Vector2>();
+            inputLookDirection = context.ReadValue<Vector2>();
         }
         
         public void Jump(InputAction.CallbackContext context)
