@@ -19,7 +19,18 @@ public class PlayerManager : MonoBehaviour
 
     public static void NextPlayer()
     {
-        _currentPlayerIndex = ++_currentPlayerIndex % Players.Length;
+        if (++_currentPlayerIndex >= Players.Length)
+        {
+            _currentPlayerIndex = _currentPlayerIndex % Players.Length;
+            print("End of round!");
+        }
+        
+        Player nextPlayer = Players[_currentPlayerIndex];
+        if (!nextPlayer.IsAlive)
+        {
+            NextPlayer();
+            return;
+        }
         
         ActivePlayer?.playerController.Move(new Vector2());
         ActivePlayer = Players[_currentPlayerIndex];

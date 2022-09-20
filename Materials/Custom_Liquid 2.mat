@@ -30,7 +30,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FluidHeight: 0.456
+    - _FluidHeight: 0.35
     - _FluidHueOffset: 0.715
     - _FluidHueRange: 0.1
     - _FluidMaxHeight: 1.1

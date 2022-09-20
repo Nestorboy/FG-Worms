@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IWeapon
+namespace Interfaces
 {
-    public void UsePrimary();
+    public interface IWeapon
+    {
+        public void UsePrimary();
 
-    public void UseSecondary();
+        public void UseSecondary();
+    }
 }
