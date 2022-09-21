@@ -1,65 +1,150 @@
-#pragma kernel CSMain
+#pragma kernel MarchCubes
 
 #include "Assets/Scripts/Terrain/Marching Table.cginc"
 #include "Assets/Scripts/Terrain/Marching Utils.cginc"
 
 struct Triangle
 {
-    float3 verts[3];
+    float3 vertexC;
+    float3 vertexB;
+    float3 vertexA;
 };
 
 struct Cell
 {
-    Triangle triangles[5];
     float weights[8];
 };
 
-uint3 Dimensions;
+float4 _Time;
 
-AppendStructuredBuffer<Triangle> CellBuffer;
+AppendStructuredBuffer<Triangle> TriangleBuffer;
+RWStructuredBuffer<uint> CounterBuffer;
 
-[numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+[numthreads(4,4,4)]
+void MarchCubes(uint3 id : SV_DispatchThreadID)
 {
-    float3 coord = float3(id) / Dimensions;
-    float4 invDim = float4(0, 1.0 / Dimensions);
+    // Avoid boundary cells.
+    if (any(id + 1 >= _Dimensions.xyz)) return;
 
-    Cell cell;
-    int caseIndex = 0;
-    for (int i = 0; i < 8; i++)
+    // What it do? idk.
+    float4 samples[8];
+    uint i;
+    for (i = 0; i < 8; i++)
+        samples[i] = VoxelValueWithGradient(id + CubeVertex(i));
+
+    // Case.
+    uint selector = 0;
+    for (i = 0; i < 8; i++)
+        selector |= (samples[i].w < _IsoValue) << i;
+
+    // Fully inside/outside.
+    if (selector == 0 || selector == 0xff) return;
+
+    
+    float3 vertices[12];
+    float3 normals[12];
+    for (i = 0; i < 12; i++)
     {
-        float3 offset =  float3(
-            invDim[i>>0&1 ? 1 : 0],
-            invDim[i>>1&1 ? 2 : 0],
-            invDim[i>>2&1 ? 3 : 0]
-            );
-
-        float weight = noise(coord + offset);
-        cell.weights[i] = weight;
-        caseIndex |= (weight > 0) << i;
+        uint2 pair = EdgeVertexPair(i);
+        float4 sample1 = samples[pair.x];
+        float4 sample2 = samples[pair.y];
+        float3 vertex1 = id + CubeVertex(pair.x);
+        float3 vertex2 = id + CubeVertex(pair.y);
+        float param = (_IsoValue - sample1.w) / (sample2.w - sample1.w);
+        vertices[i] = TransformPoint(lerp(vertex1, vertex2, param));
+        normals[i] = -normalize(lerp(sample1.xyz, sample2.xyz, param));
     }
 
-    // Check for fully inside or outside.
-    if (EdgeTable[caseIndex] == 0)
-        return;
-
-    for (int i = 0; VertTable[caseIndex][i] > -1; i += 3)
+    //uint2 tri_data = TriangleTable[selector];
+    for (uint i = 0; i < 15; i += 3)
     {
-        uint2 e1 = uint2(
-            cornerIndexAFromEdge[VertTable[caseIndex][i+0]],
-            cornerIndexBFromEdge[VertTable[caseIndex][i+0]]
-            );
-        uint2 e2 = uint2(
-            cornerIndexAFromEdge[VertTable[caseIndex][i+1]],
-            cornerIndexBFromEdge[VertTable[caseIndex][i+1]]
-            );
-        uint2 e3 = uint2(
-            cornerIndexAFromEdge[VertTable[caseIndex][i+2]],
-            cornerIndexBFromEdge[VertTable[caseIndex][i+2]]
-            );
-        
+        //uint e1 = EdgeIndexFromTriangleTable(tri_data, i);
+        //uint e2 = EdgeIndexFromTriangleTable(tri_data, i + 1);
+        //uint e3 = EdgeIndexFromTriangleTable(tri_data, i + 2);
+        uint e1 = VertTable[selector][i];
+        uint e2 = VertTable[selector][i+1];
+        uint e3 = VertTable[selector][i+2];
+        if (e1 == -1) return;
+
+        //uint count = CounterBuffer.IncrementCounter();
+        //if (count >= _MaxTriangle) return;
+
+        //uint vidx = count * 3;
+        //WriteVertex(vidx + 0, vertices[e1], normals[e1]);
+        //WriteVertex(vidx + 1, vertices[e2], normals[e2]);
+        //WriteVertex(vidx + 2, vertices[e3], normals[e3]);
+        //WriteIndices(vidx, uint3(vidx, vidx + 1, vidx + 2));
         Triangle tri;
-        //tri.verts[0] = invLerp(cell[]);
-        CellBuffer.Append(tri);
+
+        tri.vertexA = vertices[e1];
+        tri.vertexB = vertices[e2];
+        tri.vertexC = vertices[e3];
+        
+        TriangleBuffer.Append(tri);
     }
+    
+    //_Dimensions *= 4;
+    //float3 coord = float3(id) / _Dimensions;
+    //float4 invDim = float4(0, 1.0 / _Dimensions);
+    //
+    //Cell cell;
+    //int caseIndex = 0;
+    //for (int i = 0; i < 8; i++)
+    //{
+    //    float3 offset = float3(
+    //        invDim[i>>0&1 ? 1 : 0],
+    //        invDim[i>>1&1 ? 2 : 0],
+    //        invDim[i>>2&1 ? 3 : 0]
+    //        );
+    //
+    //    float weight = noise((coord + offset)+_Time.y);
+    //    cell.weights[i] = weight;
+    //    caseIndex |= (weight > 0) << i;
+    //}
+    //
+    //// Check for fully inside or outside.
+    //if (EdgeTable[caseIndex] == 0)
+    //    return;
+
+    //Triangle t;
+    //t.vertexA = 0;
+    //t.vertexB = 0;
+    //t.vertexC = 0;
+    //TriangleBuffer.Append(t);
+    
+    //for (int i = 0; VertTable[caseIndex][i] > -1; i += 3)
+    //{
+    //    uint2 e1 = uint2(
+    //        cornerIndexAFromEdge[VertTable[caseIndex][i+0]],
+    //        cornerIndexBFromEdge[VertTable[caseIndex][i+0]]
+    //        );
+    //    uint2 e2 = uint2(
+    //        cornerIndexAFromEdge[VertTable[caseIndex][i+1]],
+    //        cornerIndexBFromEdge[VertTable[caseIndex][i+1]]
+    //        );
+    //    uint2 e3 = uint2(
+    //        cornerIndexAFromEdge[VertTable[caseIndex][i+2]],
+    //        cornerIndexBFromEdge[VertTable[caseIndex][i+2]]
+    //        );
+    //
+    //    Triangle tri;
+    //    
+    //    float3 p1 = CubeVertex(e1.x);
+    //    float3 p2 = CubeVertex(e1.y);
+    //    tri.vertexA = id + p1 + (p2 - p1) * invLerp(cell.weights[e1.x], cell.weights[e1.y], 0);
+    //    //tri.vertexA *= invDim;
+    //    
+    //    p1 = CubeVertex(e2.x);
+    //    p2 = CubeVertex(e2.y);
+    //    tri.vertexB = id + p1 + (p2 - p1) * invLerp(cell.weights[e2.x], cell.weights[e2.y], 0);
+    //    //tri.vertexB *= invDim;
+    //    
+    //    p1 = CubeVertex(e3.x);
+    //    p2 = CubeVertex(e3.y);
+    //    tri.vertexC = id + p1 + (p2 - p1) * invLerp(cell.weights[e3.x], cell.weights[e3.y], 0);
+    //    //tri.vertexC *= invDim;
+    //    
+    //    //Counter.IncrementCounter();
+    //    TriangleBuffer.Append(tri);
+    //}
 }

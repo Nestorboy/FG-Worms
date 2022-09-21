@@ -1,51 +1,67 @@
-// Source https://iquilezles.org/articles/morenoise/
-float hash( float n )
-{
-    return frac(sin(n)*753.5453123);
-}
+// Source: https://github.com/keijiro/ComputeMarchingCubes/blob/main/Assets/MarchingCubes/MarchingCubes.compute
 
-// Source https://iquilezles.org/articles/morenoise/
-float noise( in float3 x )
-{
-    // grid
-    float3 p = floor(x);
-    float3 w = frac(x);
-    
-    // quintic interpolant
-    float3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+#include "Assets/Scripts/Terrain/Marching Volume.cginc"
 
-    
-    // gradients
-    float3 ga = hash( p+float3(0.0,0.0,0.0) );
-    float3 gb = hash( p+float3(1.0,0.0,0.0) );
-    float3 gc = hash( p+float3(0.0,1.0,0.0) );
-    float3 gd = hash( p+float3(1.0,1.0,0.0) );
-    float3 ge = hash( p+float3(0.0,0.0,1.0) );
-    float3 gf = hash( p+float3(1.0,0.0,1.0) );
-    float3 gg = hash( p+float3(0.0,1.0,1.0) );
-    float3 gh = hash( p+float3(1.0,1.0,1.0) );
-    
-    // projections
-    float va = dot( ga, w-float3(0.0,0.0,0.0) );
-    float vb = dot( gb, w-float3(1.0,0.0,0.0) );
-    float vc = dot( gc, w-float3(0.0,1.0,0.0) );
-    float vd = dot( gd, w-float3(1.0,1.0,0.0) );
-    float ve = dot( ge, w-float3(0.0,0.0,1.0) );
-    float vf = dot( gf, w-float3(1.0,0.0,1.0) );
-    float vg = dot( gg, w-float3(0.0,1.0,1.0) );
-    float vh = dot( gh, w-float3(1.0,1.0,1.0) );
-	
-    // interpolation
-    return va + 
-           u.x*(vb-va) + 
-           u.y*(vc-va) + 
-           u.z*(ve-va) + 
-           u.x*u.y*(va-vb-vc+vd) + 
-           u.y*u.z*(va-vc-ve+vg) + 
-           u.z*u.x*(va-vb-ve+vf) + 
-           u.x*u.y*u.z*(-va+vb+vc-vd+ve-vf-vg+vh);
-}
+#define SIZEOF_UINT 4
+#define SIZEOF_FLOAT3 12
+
+uint3 _Dimensions;
+uint1 _MaxTriangle;
+float _IsoValue;
+float _Scale;
+
+// Weights/volumes.
+StructuredBuffer<float> Voxels;
 
 float invLerp(float from, float to, float value){
     return (value - from) / (to - from);
+}
+
+uint3 CubeVertex(uint index)
+{
+    bool x = index & 1;
+    bool y = index & 2;
+    bool z = index & 4;
+    return uint3(x ^ y, y, z);
+}
+
+float VoxelValue(uint x, uint y, uint z)
+{
+    //return Voxels[x + _Dimensions.x * (y + _Dimensions.y * z)];
+    return noise(float3(x,y,z) / _Dimensions);
+}
+
+float4 VoxelValueWithGradient(uint3 i)
+{
+    uint3 i_n = max(i, 1) - 1;
+    uint3 i_p = min(i + 1, _Dimensions - 1);
+    float v = VoxelValue(i.x, i.y, i.z);
+    float v_nx = VoxelValue(i_n.x, i.y, i.z);
+    float v_px = VoxelValue(i_p.x, i.y, i.z);
+    float v_ny = VoxelValue(i.x, i_n.y, i.z);
+    float v_py = VoxelValue(i.x, i_p.y, i.z);
+    float v_nz = VoxelValue(i.x, i.y, i_n.z);
+    float v_pz = VoxelValue(i.x, i.y, i_p.z);
+    return float4(v_px - v_nx, v_py - v_ny, v_pz - v_nz, v);
+}
+
+uint2 EdgeVertexPair(uint index)
+{
+    // (0, 1) (1, 2) (2, 3) (3, 0)
+    // (4, 5) (5, 6) (6, 7) (7, 4)
+    // (0, 4) (1, 5) (2, 6) (3, 7)
+    uint v1 = index & 7;
+    uint v2 = index < 8 ? ((index + 1) & 3) | (index & 4) : v1 + 4;
+    return uint2(v1, v2);
+}
+
+float3 TransformPoint(float3 p)
+{
+    return (p + 0.5 - _Dimensions / 2) * _Scale;
+}
+
+uint EdgeIndexFromTriangleTable(uint2 data, uint index)
+{
+    return 0xfu & (index < 8 ? data.x >> ((index + 0) * 4) :
+                               data.y >> ((index - 8) * 4));
 }

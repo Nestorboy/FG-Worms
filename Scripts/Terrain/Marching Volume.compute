@@ -1,0 +1,9 @@
+#pragma kernel MarchVolume
+
+#include "Assets/Scripts/Terrain/Marching Volume.cginc"
+
+[numthreads(4,4,4)]
+void MarchVolume(uint3 id : SV_DispatchThreadID)
+{
+    
+}
