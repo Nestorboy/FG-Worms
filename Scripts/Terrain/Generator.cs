@@ -13,9 +13,9 @@ namespace Terrain
         private ComputeBuffer _triangleBuffer;
         private ComputeBuffer _counterBuffer;
 
-        private int marchMaxTris;
-        private float marchIso = 0;
-        private float marchSize;
+        private int marchMaxTris = 65535;
+        private int marchIso = 0;
+        private int marchScale = 1;
         
         private struct Triangle {
 #pragma warning disable 649
@@ -79,9 +79,9 @@ namespace Terrain
             compute.SetBuffer(0, "CounterBuffer", _counterBuffer);
             
             compute.SetInts("_Dimensions", dimensions.x, dimensions.y, dimensions.z);
-            compute.SetInt("_MaxTriangle", 65535);
-            compute.SetInt("_IsoValue", 0);
-            compute.SetInt("_Scale", 1);
+            compute.SetInt("_MaxTriangle", marchMaxTris);
+            compute.SetInt("_IsoValue", marchIso);
+            compute.SetInt("_Scale", marchScale);
             compute.SetVector("_Time", Shader.GetGlobalVector ("_Time"));
             
             compute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
@@ -111,7 +111,7 @@ namespace Terrain
             print(s);
             
             MeshFilter filter = GetComponent<MeshFilter>();
-            Mesh mesh = filter.sharedMesh;
+            Mesh mesh = filter.mesh;
             mesh.Clear();
 
             mesh.vertices = vertices;

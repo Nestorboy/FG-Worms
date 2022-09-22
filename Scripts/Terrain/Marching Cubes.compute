@@ -52,6 +52,7 @@ void MarchCubes(uint3 id : SV_DispatchThreadID)
         float3 vertex2 = id + CubeVertex(pair.y);
         float param = (_IsoValue - sample1.w) / (sample2.w - sample1.w);
         vertices[i] = TransformPoint(lerp(vertex1, vertex2, param));
+        vertices[i] = sample2.w;
         normals[i] = -normalize(lerp(sample1.xyz, sample2.xyz, param));
     }
 

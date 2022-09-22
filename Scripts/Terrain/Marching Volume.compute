@@ -2,8 +2,14 @@
 
 #include "Assets/Scripts/Terrain/Marching Volume.cginc"
 
-[numthreads(4,4,4)]
+uint3 _Dimensions;
+
+RWStructuredBuffer<float> VolumeBuffer;
+
+[numthreads(8,8,8)]
 void MarchVolume(uint3 id : SV_DispatchThreadID)
 {
+    uint index = id.x + (id.y + id.z * _Dimensions.y) * _Dimensions.x; // 3D index to 1D index.
     
+    VolumeBuffer[index] = noise(float3(id) / _Dimensions);
 }

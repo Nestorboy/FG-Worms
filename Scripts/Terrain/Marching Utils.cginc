@@ -13,10 +13,6 @@ float _Scale;
 // Weights/volumes.
 StructuredBuffer<float> Voxels;
 
-float invLerp(float from, float to, float value){
-    return (value - from) / (to - from);
-}
-
 uint3 CubeVertex(uint index)
 {
     bool x = index & 1;
