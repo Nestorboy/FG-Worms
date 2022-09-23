@@ -84,12 +84,12 @@ namespace Terrain
 
             volumeCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
 
-            float[] volumes = new float[voxelCount];
-            _volumeBuffer.GetData(volumes);
-            string s = "Volumes:";
-            foreach (float v in volumes)
-                s += "\n" + v;
-            print(s);
+            //float[] volumes = new float[voxelCount];
+            //_volumeBuffer.GetData(volumes);
+            //string s = "Volumes:";
+            //foreach (float v in volumes)
+            //    s += "\n" + v;
+            //print(s);
             
             // Prepare marching buffers.
             _triangleBuffer.SetCounterValue(0);

@@ -1,7 +1,5 @@
 // Source: https://github.com/keijiro/ComputeMarchingCubes/blob/main/Assets/MarchingCubes/MarchingCubes.compute
 
-#include "Assets/Scripts/Terrain/Marching Volume.cginc"
-
 #define SIZEOF_UINT 4
 #define SIZEOF_FLOAT3 12
 
@@ -24,7 +22,6 @@ uint3 CubeVertex(uint index)
 float VoxelValue(uint x, uint y, uint z)
 {
     return Voxels[x + _Dimensions.x * (y + _Dimensions.y * z)];
-    //return noise(float3(x,y,z) / _Dimensions);
 }
 
 float4 VoxelValueWithGradient(uint3 i)

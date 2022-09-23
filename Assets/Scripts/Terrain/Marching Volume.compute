@@ -3,6 +3,7 @@
 #include "Assets/Scripts/Terrain/Marching Volume.cginc"
 
 uint3 _Dimensions;
+float _Scale;
 float4 _Time;
 
 RWStructuredBuffer<float> VolumeBuffer;
@@ -13,5 +14,5 @@ void MarchVolume(uint3 id : SV_DispatchThreadID)
     uint index = id.x + (id.y + id.z * _Dimensions.y) * _Dimensions.x; // 3D index to 1D index.
 
     //VolumeBuffer[index] = id.x / 10.0 + id.y + id.z * 10.0;
-    VolumeBuffer[index] = snoise((id + float3(0,0,_Time.y)) / _Dimensions);
+    VolumeBuffer[index] = snoise((id * _Scale + float3(0,0,_Time.y)) / _Dimensions);
 }
