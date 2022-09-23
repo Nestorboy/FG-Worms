@@ -230,6 +230,7 @@ GameObject:
   - component: {fileID: 235699715}
   - component: {fileID: 235699714}
   - component: {fileID: 235699712}
+  - component: {fileID: 235699717}
   m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -249,7 +250,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92963540eb46b4a40aed3a34ade035fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  compute: {fileID: 7200000, guid: be297152d264724429e995a4a856c8c2, type: 3}
+  volumeCompute: {fileID: 7200000, guid: 03191df0a54a7ef4881f2bdc2d118a3a, type: 3}
+  marchCompute: {fileID: 7200000, guid: be297152d264724429e995a4a856c8c2, type: 3}
   dimensions: {x: 4, y: 4, z: 4}
 --- !u!23 &235699714
 MeshRenderer:
@@ -271,7 +273,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: eb3bd71ec692fd84cbdf7c471b747987, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -316,6 +318,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &235699717
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235699711}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &251077830 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1587899350730506876, guid: f9992f97060b4bf458bb18f00c620c48, type: 3}

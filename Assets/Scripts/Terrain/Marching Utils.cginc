@@ -23,8 +23,8 @@ uint3 CubeVertex(uint index)
 
 float VoxelValue(uint x, uint y, uint z)
 {
-    //return Voxels[x + _Dimensions.x * (y + _Dimensions.y * z)];
-    return noise(float3(x,y,z) / _Dimensions);
+    return Voxels[x + _Dimensions.x * (y + _Dimensions.y * z)];
+    //return noise(float3(x,y,z) / _Dimensions);
 }
 
 float4 VoxelValueWithGradient(uint3 i)

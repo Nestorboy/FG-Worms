@@ -5,17 +5,18 @@ namespace Terrain
 {
     public class Generator : MonoBehaviour
     {
-        [SerializeField]
-        private ComputeShader compute;
-        [SerializeField]
-        private Vector3Int dimensions;
+        [SerializeField] private ComputeShader volumeCompute;
+        [SerializeField] private ComputeShader marchCompute;
+        [SerializeField] private Vector3Int dimensions;
         
+        private ComputeBuffer _volumeBuffer;
         private ComputeBuffer _triangleBuffer;
         private ComputeBuffer _counterBuffer;
 
+        private int voxelCount = 0;
         private int marchMaxTris = 65535;
-        private int marchIso = 0;
-        private int marchScale = 1;
+        private float marchIso = 0f;
+        private float marchScale = 1f;
         
         private struct Triangle {
 #pragma warning disable 649
@@ -51,10 +52,11 @@ namespace Terrain
         {
             ReleaseBuffers();
             
-            int voxelCount = 64 * dimensions.x * dimensions.y * dimensions.z;
+            voxelCount = 64 * dimensions.x * dimensions.y * dimensions.z;
             marchMaxTris = voxelCount * 5;
             
-            _triangleBuffer = new ComputeBuffer(marchMaxTris, sizeof (float) * 3 * 3, ComputeBufferType.Append); // 3 vertices per buffer.
+            _volumeBuffer = new ComputeBuffer(voxelCount, sizeof(float));
+            _triangleBuffer = new ComputeBuffer(marchMaxTris, sizeof(float) * 3 * 3, ComputeBufferType.Append); // 3 vertices per buffer.
             _counterBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
         }
         
@@ -62,6 +64,7 @@ namespace Terrain
         {
             _triangleBuffer?.Release();
             _counterBuffer?.Release();
+            _volumeBuffer?.Release();
         }
 
         private void GenerateMesh()
@@ -72,19 +75,36 @@ namespace Terrain
             
             AllocateBuffers();
             
-            // Prepare buffers.
+            // Prepare volume buffer.
+            volumeCompute.SetBuffer(0, "VolumeBuffer", _volumeBuffer);
+            volumeCompute.GetKernelThreadGroupSizes(0, out uint volX, out uint volY, out uint volZ);
+            volumeCompute.SetInts("_Dimensions", dimensions.x * (int)volX, dimensions.y * (int)volY, dimensions.z * (int)volZ);
+            volumeCompute.SetFloat("_Scale", marchScale);
+            volumeCompute.SetVector("_Time", Shader.GetGlobalVector ("_Time"));
+
+            volumeCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
+
+            float[] volumes = new float[voxelCount];
+            _volumeBuffer.GetData(volumes);
+            string s = "Volumes:";
+            foreach (float v in volumes)
+                s += "\n" + v;
+            print(s);
+            
+            // Prepare marching buffers.
             _triangleBuffer.SetCounterValue(0);
             _counterBuffer.SetCounterValue(0);
-            compute.SetBuffer(0, "TriangleBuffer", _triangleBuffer);
-            compute.SetBuffer(0, "CounterBuffer", _counterBuffer);
+            marchCompute.SetBuffer(0, "Voxels", _volumeBuffer);
+            marchCompute.SetBuffer(0, "TriangleBuffer", _triangleBuffer);
+            marchCompute.SetBuffer(0, "CounterBuffer", _counterBuffer);
             
-            compute.SetInts("_Dimensions", dimensions.x, dimensions.y, dimensions.z);
-            compute.SetInt("_MaxTriangle", marchMaxTris);
-            compute.SetInt("_IsoValue", marchIso);
-            compute.SetInt("_Scale", marchScale);
-            compute.SetVector("_Time", Shader.GetGlobalVector ("_Time"));
-            
-            compute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
+            marchCompute.GetKernelThreadGroupSizes(0, out uint marchX, out uint marchY, out uint marchZ);
+            marchCompute.SetInts("_Dimensions", dimensions.x * (int)marchX, dimensions.y * (int)marchY, dimensions.z * (int)marchZ);
+            marchCompute.SetInt("_MaxTriangle", marchMaxTris);
+            marchCompute.SetFloat("_IsoValue", marchIso);
+            marchCompute.SetFloat("_Scale", marchScale);
+
+            marchCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
             
             ComputeBuffer.CopyCount(_triangleBuffer, _counterBuffer, 0);
             int[] countArray = { 0 };
@@ -96,21 +116,18 @@ namespace Terrain
             
             Vector3[] vertices = new Vector3[triCount * 3];
             int[] triangles = new int[triCount * 3];
-
-            string s = $"Verts [{triCount}]:";
+            
             for (int i = 0; i < triCount; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
                     triangles[i * 3 + j] = i * 3 + j;
                     vertices[i * 3 + j] = tris[i][j];
-                    s += "\n" + tris[i][j];
                 }
             }
 
-            print(s);
-            
             MeshFilter filter = GetComponent<MeshFilter>();
+            MeshCollider collider = GetComponent<MeshCollider>();
             Mesh mesh = filter.mesh;
             mesh.Clear();
 
@@ -118,6 +135,8 @@ namespace Terrain
             mesh.triangles = triangles;
             mesh.RecalculateNormals();
 
+            collider.sharedMesh = mesh;
+            
             ReleaseBuffers();
         }
     }
