@@ -33,7 +33,7 @@ namespace Input
 
         public void Look(InputAction.CallbackContext context)
         {
-            inputLookDirection = context.ReadValue<Vector2>();
+            inputLookDirection = context.ReadValue<Vector2>() / new Vector2(Screen.width, Screen.height) * 360f;
         }
         
         public void Jump(InputAction.CallbackContext context)
@@ -41,7 +41,7 @@ namespace Input
             if (!ActivePlayer) return;
             
             if (!context.started) return;
-            print("Pressed: [Jump]");
+            //print("Pressed: [Jump]");
             
             ActivePlayer.playerController.Jump();
         }

@@ -16,7 +16,7 @@ struct Cell
 };
 
 AppendStructuredBuffer<Triangle> TriangleBuffer;
-RWStructuredBuffer<uint> CounterBuffer;
+//RWStructuredBuffer<uint> CounterBuffer;
 
 [numthreads(4,4,4)]
 void MarchCubes(uint3 id : SV_DispatchThreadID)

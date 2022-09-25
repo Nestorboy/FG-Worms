@@ -16,8 +16,9 @@ namespace Terrain
         private int voxelCount = 0;
         private int marchMaxTris = 65535;
         private float marchIso = 0f;
-        private float marchScale = 1f;
-        
+        [SerializeField] private Vector3 marchScale = Vector3.one;
+        [SerializeField] private Vector3 marchOffset = Vector3.zero;
+
         private struct Triangle {
 #pragma warning disable 649
             public Vector3 a;
@@ -40,12 +41,12 @@ namespace Terrain
         
         void Awake()
         {
-            GenerateMesh();
+            //GenerateMesh();
         }
 
         private void Update()
         {
-            //GenerateMesh();
+            GenerateMesh();
         }
 
         private void AllocateBuffers()
@@ -74,15 +75,8 @@ namespace Terrain
             dimensions.z = Math.Max(dimensions.z, 1);
             
             AllocateBuffers();
-            
-            // Prepare volume buffer.
-            volumeCompute.SetBuffer(0, "VolumeBuffer", _volumeBuffer);
-            volumeCompute.GetKernelThreadGroupSizes(0, out uint volX, out uint volY, out uint volZ);
-            volumeCompute.SetInts("_Dimensions", dimensions.x * (int)volX, dimensions.y * (int)volY, dimensions.z * (int)volZ);
-            volumeCompute.SetFloat("_Scale", marchScale);
-            volumeCompute.SetVector("_Time", Shader.GetGlobalVector ("_Time"));
 
-            volumeCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
+            MarchVolume();
 
             //float[] volumes = new float[voxelCount];
             //_volumeBuffer.GetData(volumes);
@@ -102,7 +96,7 @@ namespace Terrain
             marchCompute.SetInts("_Dimensions", dimensions.x * (int)marchX, dimensions.y * (int)marchY, dimensions.z * (int)marchZ);
             marchCompute.SetInt("_MaxTriangle", marchMaxTris);
             marchCompute.SetFloat("_IsoValue", marchIso);
-            marchCompute.SetFloat("_Scale", marchScale);
+            marchCompute.SetFloat("_Scale", 1f);
 
             marchCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
             
@@ -133,11 +127,31 @@ namespace Terrain
 
             mesh.vertices = vertices;
             mesh.triangles = triangles;
-            mesh.RecalculateNormals();
-
-            collider.sharedMesh = mesh;
+            if (triCount > 0)
+            {
+                mesh.RecalculateNormals();
+                collider.sharedMesh = mesh;
+            }
             
             ReleaseBuffers();
+        }
+
+        public void MarchVolume()
+        {
+            volumeCompute.SetBuffer(0, "VolumeBuffer", _volumeBuffer);
+            volumeCompute.GetKernelThreadGroupSizes(0, out uint volX, out uint volY, out uint volZ);
+            volumeCompute.SetInts("_Dimensions", dimensions.x * (int)volX, dimensions.y * (int)volY, dimensions.z * (int)volZ);
+            volumeCompute.SetVector("_Scale", marchScale);
+            volumeCompute.SetVector("_Offset", marchOffset);
+
+            volumeCompute.SetVector("_Time", Shader.GetGlobalVector("_Time"));
+
+            volumeCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
+        }
+
+        public void MarchCubes()
+        {
+
         }
     }
 }

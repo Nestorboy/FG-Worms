@@ -253,6 +253,8 @@ MonoBehaviour:
   volumeCompute: {fileID: 7200000, guid: 03191df0a54a7ef4881f2bdc2d118a3a, type: 3}
   marchCompute: {fileID: 7200000, guid: be297152d264724429e995a4a856c8c2, type: 3}
   dimensions: {x: 4, y: 4, z: 4}
+  marchScale: {x: 1, y: 1, z: 1}
+  marchOffset: {x: 0, y: 0, z: 0}
 --- !u!23 &235699714
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -273,7 +275,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3033667219593020291, guid: 4396ef3ea0ddfa140bde119edcf9f47b, type: 3}
+  - {fileID: 2100000, guid: cf2479c4334814a46968d59b3ddbc816, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -311,7 +313,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 235699711}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.48, z: 0}
+  m_LocalPosition: {x: 0, y: 7.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

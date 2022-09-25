@@ -1,8 +1,5 @@
 using Input;
 using UnityEngine;
-using Quaternion = UnityEngine.Quaternion;
-using Vector2 = UnityEngine.Vector2;
-using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(Camera))]
 public class PlayerCamera : MonoBehaviour
@@ -12,6 +9,7 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] private Vector3 cameraOffset;
     [SerializeField] private Vector3 cameraPivot;
 
+    private float _initialCameraDistance;
     private Quaternion _initialRotation = Quaternion.identity;
     private Vector3 _initialPosition;
     private Vector2 _rotationOffsets;
@@ -38,24 +36,29 @@ public class PlayerCamera : MonoBehaviour
         _rotationOffsets.y = Mathf.Clamp(_rotationOffsets.y, -90f, 90f);
         
         Quaternion rotationOffset = Quaternion.Euler(_rotationOffsets.y, _rotationOffsets.x, 0);
-        transform.rotation = _initialRotation * rotationOffset;
-        transform.position = PlayerManager.ActivePlayer.transform.position + cameraPivot + transform.rotation * _initialPosition;
+        Vector3 worldPivot = PlayerManager.ActivePlayer.transform.position + cameraPivot;
 
-        //print(Quaternion.LookRotation(cameraPivot - cameraOffset, PlayerManager.ActivePlayer.transform.up).eulerAngles);
-        
-        //Vector3 targetPosition = PlayerManager.ActivePlayer.transform.TransformPoint(cameraOffset);
-        //transform.position = Vector3.Lerp(transform.position, targetPosition, 1f - cameraMovementSpeed * Time.deltaTime);
+        Quaternion newRot = _initialRotation * rotationOffset;
+        Vector3 newPos;
+
+        if (Physics.Raycast(worldPivot, newRot * Vector3.back, out RaycastHit hit, _initialCameraDistance))
+            newPos = hit.point;
+        else
+            newPos = worldPivot + newRot * _initialPosition;
+
+        transform.SetPositionAndRotation(newPos, newRot);
     }
 
     public void UpdateInitialValues()
     {
-        //_initialRotation = PlayerManager.ActivePlayer.transform.rotation * Quaternion.LookRotation(cameraPivot - cameraOffset, PlayerManager.ActivePlayer.transform.up);
         _initialRotation = PlayerManager.ActivePlayer.transform.rotation;
         _rotationOffsets = new Vector2(0f, Vector3.SignedAngle(Vector3.forward, cameraPivot - cameraOffset, Vector3.right));
         Vector3 flatCameraVector = cameraOffset - cameraPivot;
         flatCameraVector.y = 0;
         flatCameraVector.Normalize();
-        
-        _initialPosition = flatCameraVector * (cameraOffset - cameraPivot).magnitude;
+
+        _initialCameraDistance = (cameraOffset - cameraPivot).magnitude;
+
+        _initialPosition = flatCameraVector * _initialCameraDistance;
     }
 }
