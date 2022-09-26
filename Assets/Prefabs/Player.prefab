@@ -151,6 +151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 0}
+  playerHand: {fileID: 0}
+  playerMaxHealth: 100
   playerHealth: 100
 --- !u!114 &8913767037953848998
 MonoBehaviour:

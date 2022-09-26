@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public PlayerInputController playerController;
-    public Transform playerHand;
+    public Transform weaponContainer;
 
     public float playerMaxHealth = 100f;
     public float playerHealth = 100f;

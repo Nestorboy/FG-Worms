@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _GlossMap:
-        m_Texture: {fileID: 2800000, guid: ab04eec3d82180e47a35383fecf79950, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -30,11 +30,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FluidHeight: 0.35
-    - _FluidHueOffset: 0.715
-    - _FluidHueRange: 0.1
-    - _FluidMaxHeight: 1.1
-    - _FluidMinHeight: 0
+    - _FluidHeight: 1
+    - _FluidHueOffset: 0.95
+    - _FluidHueRange: 0.25
+    - _FluidMaxHeight: 7.5
+    - _FluidMinHeight: -7.5
     - _Glossiness: 0.5
     - _Metallic: 0
     m_Colors:
