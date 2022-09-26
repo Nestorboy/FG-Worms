@@ -25,28 +25,58 @@ namespace Terrain
             public Vector3 b;
             public Vector3 c;
 
-            public Vector3 this [int i] {
-                get {
-                    switch (i) {
-                        case 0:
-                            return a;
-                        case 1:
-                            return b;
-                        default:
-                            return c;
-                    }
+            public Vector3 n1;
+            public Vector3 n2;
+            public Vector3 n3;
+            
+            //public Vector3 this [int i] {
+            //    get {
+            //        switch (i) {
+            //            case 0:
+            //                return a;
+            //            case 1:
+            //                return b;
+            //            default:
+            //                return c;
+            //        }
+            //    }
+            //}
+
+            public Vector3 vertex(int i)
+            {
+                switch (i)
+                {
+                    case 0:
+                        return a;
+                    case 1:
+                        return b;
+                    default:
+                        return c;
+                }
+            }
+            
+            public Vector3 normal(int i)
+            {
+                switch (i)
+                {
+                    case 0:
+                        return n1;
+                    case 1:
+                        return n2;
+                    default:
+                        return n3;
                 }
             }
         }
         
         void Awake()
         {
-            //GenerateMesh();
+            GenerateMesh();
         }
 
         private void Update()
         {
-            GenerateMesh();
+            //GenerateMesh();
         }
 
         private void AllocateBuffers()
@@ -57,7 +87,7 @@ namespace Terrain
             marchMaxTris = voxelCount * 5;
             
             _volumeBuffer = new ComputeBuffer(voxelCount, sizeof(float));
-            _triangleBuffer = new ComputeBuffer(marchMaxTris, sizeof(float) * 3 * 3, ComputeBufferType.Append); // 3 vertices per buffer.
+            _triangleBuffer = new ComputeBuffer(marchMaxTris, sizeof(float) * 3 * 3 * 2, ComputeBufferType.Append); // 3 vertices and normals  per buffer.
             _counterBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
         }
         
@@ -78,13 +108,6 @@ namespace Terrain
 
             MarchVolume();
 
-            //float[] volumes = new float[voxelCount];
-            //_volumeBuffer.GetData(volumes);
-            //string s = "Volumes:";
-            //foreach (float v in volumes)
-            //    s += "\n" + v;
-            //print(s);
-            
             // Prepare marching buffers.
             _triangleBuffer.SetCounterValue(0);
             _counterBuffer.SetCounterValue(0);
@@ -109,6 +132,7 @@ namespace Terrain
             _triangleBuffer.GetData(tris, 0, 0, triCount);
             
             Vector3[] vertices = new Vector3[triCount * 3];
+            Vector3[] normals = new Vector3[triCount * 3];
             int[] triangles = new int[triCount * 3];
             
             for (int i = 0; i < triCount; i++)
@@ -116,7 +140,8 @@ namespace Terrain
                 for (int j = 0; j < 3; j++)
                 {
                     triangles[i * 3 + j] = i * 3 + j;
-                    vertices[i * 3 + j] = tris[i][j];
+                    vertices[i * 3 + j] = tris[i].vertex(j);
+                    normals[i * 3 + j] = tris[i].normal(j);
                 }
             }
 
@@ -126,10 +151,11 @@ namespace Terrain
             mesh.Clear();
 
             mesh.vertices = vertices;
+            mesh.normals = normals;
             mesh.triangles = triangles;
             if (triCount > 0)
             {
-                mesh.RecalculateNormals();
+                //mesh.RecalculateNormals();
                 collider.sharedMesh = mesh;
             }
             
@@ -147,6 +173,13 @@ namespace Terrain
             volumeCompute.SetVector("_Time", Shader.GetGlobalVector("_Time"));
 
             volumeCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
+            
+            //float[] volumes = new float[voxelCount];
+            //_volumeBuffer.GetData(volumes);
+            //string s = "Volumes:";
+            //foreach (float v in volumes)
+            //    s += "\n" + v;
+            //print(s);
         }
 
         public void MarchCubes()

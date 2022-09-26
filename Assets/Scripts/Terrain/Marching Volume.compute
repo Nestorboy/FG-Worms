@@ -14,7 +14,7 @@ void MarchVolume(uint3 id : SV_DispatchThreadID)
 {
     uint index = id.x + (id.y + id.z * _Dimensions.y) * _Dimensions.x; // Flatten 3D index to 1D index.
     float3 coord = ((id + _Offset) * _Scale) / _Dimensions;
-    coord.y += (floor(coord.y * 4) / 4);
+    coord.y += floor(coord.y * 8) / 8;
     //VolumeBuffer[index] = snoise(coord + float3(0, 0, _Time.x));
-    VolumeBuffer[index] = snoise(coord + float3(0, 0, _Time.x)) + (float(id.y) / _Dimensions.y);
+    VolumeBuffer[index] = snoise(coord + float3(0, -_Time.x, 0)) - (float(id.y) / _Dimensions.y);
 }

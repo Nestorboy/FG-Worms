@@ -35,42 +35,41 @@ namespace Input
 
         private void FixedUpdate()
         {
+            _playerVelocity += Physics.gravity * Time.fixedDeltaTime;
+            
+            Transform camTransform = Camera.main.transform;
+            Vector3 gravityDir = Physics.gravity.normalized;
+                
+            float w = Vector3.Dot(-gravityDir, camTransform.forward);
+            Vector3 rightDir = w > -1f && w < 1f ? Vector3.Cross(-gravityDir, camTransform.forward).normalized : camTransform.right;
+            Vector3 forwardDir = Vector3.Cross(rightDir, -gravityDir).normalized;
+
+            Vector3 moveVector = rightDir * (_moveDirection.x * playerMoveSpeed) + forwardDir * (_moveDirection.y * playerMoveSpeed);
+                
+            if (_moveDirection.sqrMagnitude > 0f)
+                _targetDirection = moveVector;
+                
+            //_playerVelocity.x = _moveDirection.x * playerMoveSpeed;
+            //_playerVelocity.z = _moveDirection.y * playerMoveSpeed;
+                
+            _characterController.Move((moveVector + _playerVelocity) * Time.fixedDeltaTime);
+
             if (transform.position.y < playerRespawnHeight)
             {
                 transform.position = _respawnPosition;
-                _playerVelocity = Physics.gravity;
+                _playerVelocity = Vector3.zero;
             }
-            else
+            else if (_characterController.isGrounded)
             {
-                Transform camTransform = Camera.main.transform;
-                Vector3 gravityDir = Physics.gravity.normalized;
-                
-                float w = Vector3.Dot(-gravityDir, camTransform.forward);
-                Vector3 rightDir = w > -1f && w < 1f ? Vector3.Cross(-gravityDir, camTransform.forward).normalized : camTransform.right;
-                Vector3 forwardDir = Vector3.Cross(rightDir, -gravityDir).normalized;
-
-                Vector3 moveVector = rightDir * (_moveDirection.x * playerMoveSpeed) + forwardDir * (_moveDirection.y * playerMoveSpeed);
-                
-                if (_moveDirection.sqrMagnitude > 0f)
-                    _targetDirection = moveVector;
-                
-                //_playerVelocity.x = _moveDirection.x * playerMoveSpeed;
-                //_playerVelocity.z = _moveDirection.y * playerMoveSpeed;
-                
-                _characterController.Move((moveVector + _playerVelocity) * Time.fixedDeltaTime);
-
-                if (_characterController.isGrounded)
-                    _playerVelocity = Vector3.zero;
-
-                _playerVelocity += Physics.gravity * Time.fixedDeltaTime;
-                
-                if (_targetDirection.sqrMagnitude > 0f)
-                    _characterController.transform.rotation = Quaternion.Slerp(_characterController.transform.rotation, Quaternion.LookRotation(_targetDirection), playerRotationSpeed * Time.fixedDeltaTime);
-
-                _playerAnimator.SetBool(AnimatorParameters.IsGrounded, _characterController.isGrounded);
-                _playerAnimator.SetBool(AnimatorParameters.IsFalling, Vector3.Dot(_playerVelocity, Physics.gravity.normalized) > 0.5f);
-                _playerAnimator.SetFloat(AnimatorParameters.Velocity, _playerVelocity.magnitude * Time.fixedDeltaTime);
+                _playerVelocity = Vector3.zero;
             }
+                
+            if (_targetDirection.sqrMagnitude > 0f)
+                _characterController.transform.rotation = Quaternion.Slerp(_characterController.transform.rotation, Quaternion.LookRotation(_targetDirection), playerRotationSpeed * Time.fixedDeltaTime);
+
+            _playerAnimator.SetBool(AnimatorParameters.IsGrounded, _characterController.isGrounded);
+            _playerAnimator.SetBool(AnimatorParameters.IsFalling, Vector3.Dot(_playerVelocity, Physics.gravity.normalized) > 0.5f);
+            _playerAnimator.SetFloat(AnimatorParameters.Velocity, _playerVelocity.magnitude * Time.fixedDeltaTime);
         }
 
         #endregion Unity Events

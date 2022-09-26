@@ -8,6 +8,9 @@ struct Triangle
     float3 vertexC;
     float3 vertexB;
     float3 vertexA;
+    float3 normalC;
+    float3 normalB;
+    float3 normalA;
 };
 
 struct Cell
@@ -74,9 +77,13 @@ void MarchCubes(uint3 id : SV_DispatchThreadID)
         //WriteIndices(vidx, uint3(vidx, vidx + 1, vidx + 2));
         Triangle tri;
 
-        tri.vertexA = vertices[e1];
+        tri.vertexC = vertices[e1];
         tri.vertexB = vertices[e2];
-        tri.vertexC = vertices[e3];
+        tri.vertexA = vertices[e3];
+
+        tri.normalC = normals[e1];
+        tri.normalB = normals[e2];
+        tri.normalA = normals[e3];
         
         TriangleBuffer.Append(tri);
     }
