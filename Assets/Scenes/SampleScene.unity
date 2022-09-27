@@ -252,8 +252,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   volumeCompute: {fileID: 7200000, guid: 03191df0a54a7ef4881f2bdc2d118a3a, type: 3}
   marchCompute: {fileID: 7200000, guid: be297152d264724429e995a4a856c8c2, type: 3}
-  dimensions: {x: 4, y: 4, z: 4}
-  marchScale: {x: 1, y: 1, z: 1}
+  dimensions: {x: 8, y: 8, z: 8}
+  marchScale: {x: 2, y: 2, z: 2}
   marchOffset: {x: 0, y: 0, z: 0}
 --- !u!23 &235699714
 MeshRenderer:
@@ -1366,7 +1366,7 @@ GameObject:
   - component: {fileID: 1067799844}
   - component: {fileID: 1067799843}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Rifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
