@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     
     private Renderer _renderer;
     private MaterialPropertyBlock _propBlock;
+
+    public float NormalizedHealth => playerHealth / playerMaxHealth;
     
     public void Awake()
     {

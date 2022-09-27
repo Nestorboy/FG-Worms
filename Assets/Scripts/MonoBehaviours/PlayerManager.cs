@@ -21,7 +21,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (++_currentPlayerIndex >= Players.Length)
         {
-            _currentPlayerIndex = _currentPlayerIndex % Players.Length;
+            _currentPlayerIndex %= Players.Length;
             print("End of round!");
         }
         

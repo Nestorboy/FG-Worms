@@ -353,7 +353,7 @@
                     "name": "",
                     "id": "e874b687-fbb5-4dfd-b550-4e2479e3d7d6",
                     "path": "<Joystick>/trigger",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
                     "action": "Secondary",

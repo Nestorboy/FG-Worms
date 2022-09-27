@@ -108,21 +108,8 @@ namespace Terrain
 
             MarchVolume();
 
-            // Prepare marching buffers.
-            _triangleBuffer.SetCounterValue(0);
-            _counterBuffer.SetCounterValue(0);
-            marchCompute.SetBuffer(0, "Voxels", _volumeBuffer);
-            marchCompute.SetBuffer(0, "TriangleBuffer", _triangleBuffer);
-            marchCompute.SetBuffer(0, "CounterBuffer", _counterBuffer);
-            
-            marchCompute.GetKernelThreadGroupSizes(0, out uint marchX, out uint marchY, out uint marchZ);
-            marchCompute.SetInts("_Dimensions", dimensions.x * (int)marchX, dimensions.y * (int)marchY, dimensions.z * (int)marchZ);
-            marchCompute.SetInt("_MaxTriangle", marchMaxTris);
-            marchCompute.SetFloat("_IsoValue", marchIso);
-            marchCompute.SetFloat("_Scale", 1f);
+            MarchCubes();
 
-            marchCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
-            
             ComputeBuffer.CopyCount(_triangleBuffer, _counterBuffer, 0);
             int[] countArray = { 0 };
             _counterBuffer.GetData(countArray);
@@ -158,8 +145,6 @@ namespace Terrain
                 //mesh.RecalculateNormals();
                 collider.sharedMesh = mesh;
             }
-            
-            ReleaseBuffers();
         }
 
         public void MarchVolume()
@@ -184,7 +169,19 @@ namespace Terrain
 
         public void MarchCubes()
         {
+            _triangleBuffer.SetCounterValue(0);
+            _counterBuffer.SetCounterValue(0);
+            marchCompute.SetBuffer(0, "Voxels", _volumeBuffer);
+            marchCompute.SetBuffer(0, "TriangleBuffer", _triangleBuffer);
+            marchCompute.SetBuffer(0, "CounterBuffer", _counterBuffer);
+            
+            marchCompute.GetKernelThreadGroupSizes(0, out uint marchX, out uint marchY, out uint marchZ);
+            marchCompute.SetInts("_Dimensions", dimensions.x * (int)marchX, dimensions.y * (int)marchY, dimensions.z * (int)marchZ);
+            marchCompute.SetInt("_MaxTriangle", marchMaxTris);
+            marchCompute.SetFloat("_IsoValue", marchIso);
+            marchCompute.SetFloat("_Scale", 1f);
 
+            marchCompute.Dispatch(0, dimensions.x, dimensions.y, dimensions.z);
         }
     }
 }
