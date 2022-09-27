@@ -32,7 +32,7 @@ public class PlayerManager : MonoBehaviour
             return;
         }
         
-        ActivePlayer?.playerController.Move(new Vector2());
+        ActivePlayer?.inputController.Move(new Vector2());
         ActivePlayer = Players[_currentPlayerIndex];
     }
 }

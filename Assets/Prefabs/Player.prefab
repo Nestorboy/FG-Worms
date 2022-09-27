@@ -182,10 +182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb570ce38bf4083a39b33b83b1395f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 8913767037953848998}
+  inputController: {fileID: 8913767037953848998}
   weaponContainer: {fileID: 7371411210078199202}
-  playerMaxHealth: 100
-  playerHealth: 100
+  maxHealth: 100
+  health: 100
 --- !u!114 &8913767037953848998
 MonoBehaviour:
   m_ObjectHideFlags: 0

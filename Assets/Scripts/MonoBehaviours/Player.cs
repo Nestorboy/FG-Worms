@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public PlayerInputController playerController;
+    public PlayerInputController inputController;
     public Transform weaponContainer;
 
-    public float playerMaxHealth = 100f;
-    public float playerHealth = 100f;
+    public float maxHealth = 100f;
+    public float health = 100f;
     
     private Renderer _renderer;
     private MaterialPropertyBlock _propBlock;
 
-    public float NormalizedHealth => playerHealth / playerMaxHealth;
+    public float NormalizedHealth => health / maxHealth;
     
     public void Awake()
     {
-        if (!playerController)
-            playerController = GetComponent<PlayerInputController>();
+        if (!inputController)
+            inputController = GetComponent<PlayerInputController>();
 
         _propBlock = new MaterialPropertyBlock();
         _renderer = GetComponentInChildren<Renderer>();
@@ -30,9 +30,9 @@ public class Player : MonoBehaviour
 
     public void Damage(float points)
     {
-        playerHealth -= points;
+        health -= points;
         
-        if (playerHealth < 0f)
+        if (health < 0f)
             Kill();
 
         UpdateVisuals();
@@ -40,14 +40,14 @@ public class Player : MonoBehaviour
     
     private void Kill()
     {
-        playerHealth = 0f;
+        health = 0f;
         IsAlive = false;
     }
 
     private void UpdateVisuals()
     {
         _renderer.GetPropertyBlock(_propBlock);
-        _propBlock.SetFloat("_FluidHeight", playerHealth / playerMaxHealth);
+        _propBlock.SetFloat("_FluidHeight", health / maxHealth);
         _renderer.SetPropertyBlock(_propBlock);
     }
 }

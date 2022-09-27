@@ -28,7 +28,7 @@ namespace Input
             
             _inputMoveDirection = context.ReadValue<Vector2>();
             
-            ActivePlayer.playerController.Move(_inputMoveDirection);
+            ActivePlayer.inputController.Move(_inputMoveDirection);
         }
 
         public void Look(InputAction.CallbackContext context)
@@ -43,7 +43,7 @@ namespace Input
             if (!context.started) return;
             //print("Pressed: [Jump]");
             
-            ActivePlayer.playerController.Jump();
+            ActivePlayer.inputController.Jump();
         }
     }
 }

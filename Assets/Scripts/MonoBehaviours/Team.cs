@@ -18,7 +18,7 @@ public class Team
     {
         float health = 0;
         foreach (Player p in players)
-            health += p.playerHealth;
+            health += p.health;
         return health;
     }
 
