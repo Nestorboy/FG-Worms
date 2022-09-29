@@ -84,6 +84,6 @@ public class PlayerCamera : MonoBehaviour
         pLocal /= pLocal.w;
 
         //Vector3 pWorld = cam.cameraToWorldMatrix * pLocal;
-        return Vector3.Magnitude(pLocal);
+        return Vector3.Magnitude(new Vector3(pLocal.x, pLocal.y, 0));
     }
 }
