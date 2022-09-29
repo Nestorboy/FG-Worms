@@ -1,6 +1,7 @@
-using Interfaces;
+
 using UnityEngine;
 using Visuals;
+using Weapons;
 
 namespace Game
 {
@@ -8,7 +9,7 @@ namespace Game
     {
         public Color32 Color = UnityEngine.Color.black;
         public Player[] Players;
-        public IWeapon[] Inventory;
+        public Weapon[] Inventory;
 
         public int CurrentPlayerIndex = -1;
 
