@@ -1,3 +1,4 @@
+using System;
 using Input;
 using UnityEngine;
 
@@ -9,13 +10,14 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] private Vector3 cameraOffset;
     [SerializeField] private Vector3 cameraPivot;
 
+    public new Camera camera;
+    public Vector3 targetPosition;
+    public Vector3 targetLook;
+    
     private float _initialCameraDistance;
     private Quaternion _initialRotation = Quaternion.identity;
     private Vector3 _initialPosition;
     private Vector2 _rotationOffsets;
-
-    public Vector3 targetPosition;
-    public Vector3 targetLook;
 
     public enum MotionType
     {
@@ -26,7 +28,12 @@ public class PlayerCamera : MonoBehaviour
     }
 
     public MotionType motionType;
-    
+
+    private void Awake()
+    {
+        camera = GetComponent<Camera>();
+    }
+
     private void LateUpdate()
     {
         Vector2 lookDirection = InputManager.GetInstance().inputLookDirection;
@@ -40,9 +47,12 @@ public class PlayerCamera : MonoBehaviour
 
         Quaternion newRot = _initialRotation * rotationOffset;
         Vector3 newPos;
+        Vector3 directionBack = newRot * Vector3.back;
 
-        if (Physics.Raycast(worldPivot, newRot * Vector3.back, out RaycastHit hit, _initialCameraDistance))
-            newPos = hit.point;
+        if (Physics.SphereCast(worldPivot, ComputeCameraMinRadius(camera), directionBack, out RaycastHit hit, _initialCameraDistance))
+        {
+            newPos = worldPivot + Vector3.Project(hit.point - worldPivot, directionBack);
+        }
         else
             newPos = worldPivot + newRot * _initialPosition;
 
@@ -60,5 +70,20 @@ public class PlayerCamera : MonoBehaviour
         _initialCameraDistance = (cameraOffset - cameraPivot).magnitude;
 
         _initialPosition = flatCameraVector * _initialCameraDistance;
+    }
+    
+    /// <summary>
+    /// Computes the minimum radius of a sphere which perfectly encapsulates the cameras near clipping plane.
+    /// </summary>
+    /// <param name="cam"></param>
+    public static float ComputeCameraMinRadius(Camera cam)
+    {
+        Matrix4x4 invMat = cam.projectionMatrix.inverse;
+        Vector4 cameraCorner = new Vector4(-1, -1, -1, 1);
+        Vector4 pLocal = invMat * cameraCorner;
+        pLocal /= pLocal.w;
+
+        //Vector3 pWorld = cam.cameraToWorldMatrix * pLocal;
+        return Vector3.Magnitude(pLocal);
     }
 }
