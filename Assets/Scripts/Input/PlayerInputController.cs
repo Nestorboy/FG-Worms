@@ -9,10 +9,10 @@ namespace Input
 {
     public class PlayerInputController : MonoBehaviour
     {
-        [SerializeField] private float playerMoveSpeed = 2f;
-        [SerializeField] private float playerJumpStrength = 5f;
-        [SerializeField] private float playerRespawnHeight = -5f;
-        [SerializeField] private float playerRotationSpeed = 1f;
+        [SerializeField] private float _playerMoveSpeed = 2f;
+        [SerializeField] private float _playerJumpStrength = 5f;
+        [SerializeField] private float _playerRespawnHeight = -5f;
+        [SerializeField] private float _playerRotationSpeed = 1f;
         
         private CharacterController _characterController;
         private Vector3 _respawnPosition;
@@ -44,7 +44,7 @@ namespace Input
             Vector3 rightDir = w > -1f && w < 1f ? Vector3.Cross(-gravityDir, camTransform.forward).normalized : camTransform.right;
             Vector3 forwardDir = Vector3.Cross(rightDir, -gravityDir).normalized;
 
-            Vector3 moveVector = rightDir * (_moveDirection.x * playerMoveSpeed) + forwardDir * (_moveDirection.y * playerMoveSpeed);
+            Vector3 moveVector = rightDir * (_moveDirection.x * _playerMoveSpeed) + forwardDir * (_moveDirection.y * _playerMoveSpeed);
                 
             if (_moveDirection.sqrMagnitude > 0f)
                 _targetDirection = moveVector;
@@ -54,7 +54,7 @@ namespace Input
                 
             _characterController.Move((moveVector + _playerVelocity) * Time.fixedDeltaTime);
 
-            if (transform.position.y < playerRespawnHeight)
+            if (transform.position.y < _playerRespawnHeight)
             {
                 transform.position = _respawnPosition;
                 _playerVelocity = Vector3.zero;
@@ -65,7 +65,7 @@ namespace Input
             }
                 
             if (_targetDirection.sqrMagnitude > 0f)
-                _characterController.transform.rotation = Quaternion.Slerp(_characterController.transform.rotation, Quaternion.LookRotation(_targetDirection), playerRotationSpeed * Time.fixedDeltaTime);
+                _characterController.transform.rotation = Quaternion.Slerp(_characterController.transform.rotation, Quaternion.LookRotation(_targetDirection), _playerRotationSpeed * Time.fixedDeltaTime);
 
             _playerAnimator.SetBool(AnimatorParameters.IsGrounded, _characterController.isGrounded);
             _playerAnimator.SetBool(AnimatorParameters.IsFalling, Vector3.Dot(_playerVelocity, Physics.gravity.normalized) > 0.5f);
@@ -94,7 +94,7 @@ namespace Input
             if (!_characterController.isGrounded)
                 return;
             
-            _playerVelocity = -Physics.gravity.normalized * playerJumpStrength;
+            _playerVelocity = -Physics.gravity.normalized * _playerJumpStrength;
         }
     }
 }

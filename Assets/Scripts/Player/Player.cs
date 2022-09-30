@@ -1,53 +1,56 @@
-using System;
 using Input;
 using UnityEngine;
+using Visuals;
 
-public class Player : MonoBehaviour
+namespace Player
 {
-    public PlayerInputController inputController;
-    public Transform weaponContainer;
-
-    public float maxHealth = 100f;
-    public float health = 100f;
-    
-    private Renderer _renderer;
-    private MaterialPropertyBlock _propBlock;
-
-    public float NormalizedHealth => health / maxHealth;
-    
-    public void Awake()
+    public class Player : MonoBehaviour
     {
-        if (!inputController)
-            inputController = GetComponent<PlayerInputController>();
+        public PlayerInputController InputController;
+        public Transform WeaponContainer;
 
-        _propBlock = new MaterialPropertyBlock();
-        _renderer = GetComponentInChildren<Renderer>();
+        public float MaxHealth = 100f;
+        public float Health = 100f;
+    
+        private Renderer _renderer;
+        private MaterialPropertyBlock _propBlock;
+
+        public float NormalizedHealth => Health / MaxHealth;
+    
+        public void Awake()
+        {
+            if (!InputController)
+                InputController = GetComponent<PlayerInputController>();
+
+            _propBlock = new MaterialPropertyBlock();
+            _renderer = GetComponentInChildren<Renderer>();
         
-        UpdateVisuals();
-    }
+            UpdateVisuals();
+        }
 
-    public bool IsAlive { get; private set; } = true;
+        public bool IsAlive { get; private set; } = true;
 
-    public void Damage(float points)
-    {
-        health -= points;
+        public void Damage(float points)
+        {
+            Health -= points;
         
-        if (health < 0f)
-            Kill();
+            if (Health < 0f)
+                Kill();
 
-        UpdateVisuals();
-    }
+            UpdateVisuals();
+        }
     
-    private void Kill()
-    {
-        health = 0f;
-        IsAlive = false;
-    }
+        private void Kill()
+        {
+            Health = 0f;
+            IsAlive = false;
+        }
 
-    private void UpdateVisuals()
-    {
-        _renderer.GetPropertyBlock(_propBlock);
-        _propBlock.SetFloat("_FluidHeight", health / maxHealth);
-        _renderer.SetPropertyBlock(_propBlock);
+        private void UpdateVisuals()
+        {
+            _renderer.GetPropertyBlock(_propBlock);
+            _propBlock.SetFloat(ShaderIDs.FluidHeight, Health / MaxHealth);
+            _renderer.SetPropertyBlock(_propBlock);
+        }
     }
 }

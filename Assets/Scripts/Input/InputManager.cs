@@ -9,8 +9,8 @@ namespace Input
     {
         private static InputManager _instance;
         
-        private Vector2 _inputMoveDirection;
-        public Vector2 inputLookDirection;
+        public Vector2 InputMoveDirection;
+        public Vector2 InputLookDirection;
         
         private void Awake()
         {
@@ -26,14 +26,14 @@ namespace Input
         {
             if (!ActivePlayer) return;
             
-            _inputMoveDirection = context.ReadValue<Vector2>();
+            InputMoveDirection = context.ReadValue<Vector2>();
             
-            ActivePlayer.inputController.Move(_inputMoveDirection);
+            ActivePlayer.InputController.Move(InputMoveDirection);
         }
 
         public void Look(InputAction.CallbackContext context)
         {
-            inputLookDirection = context.ReadValue<Vector2>() / new Vector2(Screen.width, Screen.height) * 360f;
+            InputLookDirection = context.ReadValue<Vector2>() / new Vector2(Screen.width, Screen.height) * 360f;
         }
         
         public void Jump(InputAction.CallbackContext context)
@@ -43,7 +43,7 @@ namespace Input
             if (!context.started) return;
             //print("Pressed: [Jump]");
             
-            ActivePlayer.inputController.Jump();
+            ActivePlayer.InputController.Jump();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Game
     public class Team
     {
         public Color32 Color = UnityEngine.Color.black;
-        public Player[] Players;
+        public Player.Player[] Players;
         public Weapon[] Inventory;
 
         public int CurrentPlayerIndex = -1;
@@ -22,8 +22,8 @@ namespace Game
         public float GetTeamHealth()
         {
             float health = 0;
-            foreach (Player p in Players)
-                health += p.health;
+            foreach (Player.Player p in Players)
+                health += p.Health;
             return health;
         }
 
@@ -31,7 +31,7 @@ namespace Game
         /// Returns the next living player, if none, returns null.
         /// </summary>
         /// <returns></returns>
-        public Player NextPlayer()
+        public Player.Player NextPlayer()
         {
             return NextPlayer(CurrentPlayerIndex);
         }
@@ -41,14 +41,14 @@ namespace Game
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public Player NextPlayer(int index)
+        public Player.Player NextPlayer(int index)
         {
             CurrentPlayerIndex = -1;
-            Player player = null;
+            Player.Player player = null;
             for (int i = 0; i < Players.Length; ++i)
             {
                 int newIndex = index + i % Players.Length;
-                Player newPlayer = Players[newIndex];
+                Player.Player newPlayer = Players[newIndex];
                 if (newPlayer.IsAlive)
                 {
                     CurrentPlayerIndex = newIndex;
@@ -65,7 +65,7 @@ namespace Game
         /// </summary>
         /// <param name="player"></param>
         /// <param name="index"></param>
-        public void SetPlayer(Player player, int index)
+        public void SetPlayer(Player.Player player, int index)
         {
             Players[index] = player;
             if (player.IsAlive)
@@ -74,7 +74,7 @@ namespace Game
             Renderer renderer = player.GetComponent<Renderer>();
             MaterialPropertyBlock pb = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(pb);
-            pb.SetColor(ShaderIDs.color, Color);
+            pb.SetColor(ShaderIDs.Color, Color);
             renderer.SetPropertyBlock(pb);
         }
     }

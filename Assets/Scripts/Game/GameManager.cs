@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Player;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,15 +9,15 @@ namespace Game
 	[DisallowMultipleComponent]
 	public class GameManager : MonoBehaviour
 	{
-		[SerializeField] private PlayerCamera playerCamera;
+		[SerializeField] private PlayerCamera _playerCamera;
 		public Team[] Teams;
-		public Player activePlayer;
+		public Player.Player Player;
 
 		private void Start()
 		{
 			InitializeGame(Random.Range(2, 3), Random.Range(2, 4));
 			PlayerManager.NextPlayer();
-			playerCamera.UpdateInitialValues();
+			_playerCamera.UpdateInitialValues();
 		}
 	
 		private void Update()
@@ -25,7 +26,7 @@ namespace Game
 			{
 				print($"Pressed: [Next Turn]");
 				PlayerManager.NextPlayer();
-				playerCamera.UpdateInitialValues();
+				_playerCamera.UpdateInitialValues();
 			}
 		}
 
@@ -50,11 +51,11 @@ namespace Game
 				}
 			}*/
 			
-			Player[] newPlayers = new Player[playerCount];
+			Player.Player[] newPlayers = new Player.Player[playerCount];
 			for (int i = 0; i < newPlayers.Length; i++)
 			{
 				Vector3 spawnLocation = new Vector3(Random.Range(-5f, 5f), 0f, Random.Range(-5f, 5f));
-				Player newPlayer = PlayerSpawnManager.GetInstance().SpawnPlayer(spawnLocation);
+				Player.Player newPlayer = PlayerSpawnManager.GetInstance().SpawnPlayer(spawnLocation);
 				newPlayers[i] = newPlayer;
 			}
 

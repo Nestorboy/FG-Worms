@@ -4,7 +4,6 @@
 #define SIZEOF_FLOAT3 12
 
 uint3 _Dimensions;
-uint1 _MaxTriangle;
 float _IsoValue;
 float _Scale;
 
