@@ -1,3 +1,5 @@
+using System;
+using Game;
 using Input;
 using UnityEngine;
 using Visuals;
@@ -8,15 +10,17 @@ namespace Player
     {
         public PlayerInputController InputController;
         public Transform WeaponContainer;
-
+        
         public float MaxHealth = 100f;
         public float Health = 100f;
-    
+        
+        [NonSerialized] public Team Team;
+        
         private Renderer _renderer;
         private MaterialPropertyBlock _propBlock;
-
+        
         public float NormalizedHealth => Health / MaxHealth;
-    
+        
         public void Awake()
         {
             if (!InputController)

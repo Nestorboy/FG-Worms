@@ -1,10 +1,12 @@
 
+using System;
 using UnityEngine;
 using Visuals;
 using Weapons;
 
 namespace Game
 {
+    [Serializable]
     public class Team
     {
         public Color32 Color = UnityEngine.Color.black;
@@ -16,8 +18,6 @@ namespace Game
         private int _alivePlayerCount;
             
         public int PlayerCount() => Players.Length;
-        
-        public int AlivePlayerCount() => _alivePlayerCount;
 
         public float GetTeamHealth()
         {
