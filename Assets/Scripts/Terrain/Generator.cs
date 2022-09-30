@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Visuals;
 
 namespace Terrain
 {
@@ -7,7 +8,7 @@ namespace Terrain
     {
         [SerializeField] private ComputeShader _volumeCompute;
         [SerializeField] private ComputeShader _marchCompute;
-        [SerializeField] private Vector3Int _dimensions;
+        [SerializeField] private Vector3Int _dimensions = Vector3Int.one;
         
         private ComputeBuffer _volumeBuffer;
         private ComputeBuffer _triangleBuffer;
@@ -152,9 +153,9 @@ namespace Terrain
         {
             _volumeCompute.SetBuffer(0, "VolumeBuffer", _volumeBuffer);
             _volumeCompute.GetKernelThreadGroupSizes(0, out uint volX, out uint volY, out uint volZ);
-            _volumeCompute.SetInts("_Dimensions", _dimensions.x * (int)volX, _dimensions.y * (int)volY, _dimensions.z * (int)volZ);
-            _volumeCompute.SetVector("_Scale", _marchScale);
-            _volumeCompute.SetVector("_Offset", _marchOffset);
+            _volumeCompute.SetInts(ShaderIDs.Dimensions, _dimensions.x * (int)volX, _dimensions.y * (int)volY, _dimensions.z * (int)volZ);
+            _volumeCompute.SetVector(ShaderIDs.Scale, _marchScale);
+            _volumeCompute.SetVector(ShaderIDs.Offset, _marchOffset);
 
             _volumeCompute.SetVector("_Time", Shader.GetGlobalVector("_Time"));
 
@@ -177,9 +178,9 @@ namespace Terrain
             _marchCompute.SetBuffer(0, "CounterBuffer", _counterBuffer);
             
             _marchCompute.GetKernelThreadGroupSizes(0, out uint marchX, out uint marchY, out uint marchZ);
-            _marchCompute.SetInts("_Dimensions", _dimensions.x * (int)marchX, _dimensions.y * (int)marchY, _dimensions.z * (int)marchZ);
-            _marchCompute.SetFloat("_IsoValue", _marchIso);
-            _marchCompute.SetFloat("_Scale", 1f);
+            _marchCompute.SetInts(ShaderIDs.Dimensions, _dimensions.x * (int)marchX, _dimensions.y * (int)marchY, _dimensions.z * (int)marchZ);
+            _marchCompute.SetFloat(ShaderIDs.IsoValue, _marchIso);
+            _marchCompute.SetFloat(ShaderIDs.Scale, 1f);
 
             _marchCompute.Dispatch(0, _dimensions.x, _dimensions.y, _dimensions.z);
         }

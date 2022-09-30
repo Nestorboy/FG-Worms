@@ -9,10 +9,10 @@ namespace Input
 {
     public class PlayerInputController : MonoBehaviour
     {
-        [SerializeField] private float _playerMoveSpeed = 2f;
+        [SerializeField] private float _playerMoveSpeed = 3f;
         [SerializeField] private float _playerJumpStrength = 5f;
         [SerializeField] private float _playerRespawnHeight = -5f;
-        [SerializeField] private float _playerRotationSpeed = 1f;
+        [SerializeField] private float _playerRotationSpeed = 10f;
         
         private CharacterController _characterController;
         private Vector3 _respawnPosition;

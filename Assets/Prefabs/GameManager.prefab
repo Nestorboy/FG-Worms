@@ -60,6 +60,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbfe31defbfb4407942b8266744ff46a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerCamera: {fileID: 0}
+  Player: {fileID: 0}
 --- !u!114 &1282960734658124808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,8 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8fa88c136b9ac64585369a02f4ea509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 8607898641545169904, guid: dee7362fa9f3c254f843b8183fb0b503, type: 3}
-  bodyMaterials:
+  _playerPrefab: {fileID: 8607898641545169904, guid: dee7362fa9f3c254f843b8183fb0b503, type: 3}
+  _bodyMaterials:
   - {fileID: 2100000, guid: 8f394687bb72add449a5ffbbefc4851c, type: 2}
   - {fileID: 2100000, guid: 2507eba8c1dff0347ad5aac491ba640c, type: 2}
   - {fileID: 2100000, guid: 9c1ff6b1a3e33274d8eb2f5dd4f8820f, type: 2}
@@ -89,6 +91,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39bc42e5a3864f3e8807bdcf242959a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InputMoveDirection: {x: 0, y: 0}
+  InputLookDirection: {x: 0, y: 0}
 --- !u!114 &8233278097825565070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +198,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: dbe229a4-0672-469a-987a-b73db8e7d391
     m_ActionName: Player/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1c131dfd-31de-43c0-8254-1479da76cb16
+    m_ActionName: Player/Secondary[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

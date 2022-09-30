@@ -182,10 +182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb570ce38bf4083a39b33b83b1395f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputController: {fileID: 8913767037953848998}
-  weaponContainer: {fileID: 7371411210078199202}
-  maxHealth: 100
-  health: 100
+  InputController: {fileID: 0}
+  WeaponContainer: {fileID: 0}
+  MaxHealth: 100
+  Health: 100
 --- !u!114 &8913767037953848998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,10 +198,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c8178c6c819c940814a73a23a24083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMoveSpeed: 5
-  playerJumpStrength: 5
-  playerRespawnHeight: -5
-  playerRotationSpeed: 10
+  _playerMoveSpeed: 3
+  _playerJumpStrength: 5
+  _playerRespawnHeight: -5
+  _playerRotationSpeed: 10
 --- !u!95 &517846267771637953
 Animator:
   serializedVersion: 4
