@@ -250,11 +250,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92963540eb46b4a40aed3a34ade035fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  volumeCompute: {fileID: 7200000, guid: 03191df0a54a7ef4881f2bdc2d118a3a, type: 3}
-  marchCompute: {fileID: 7200000, guid: be297152d264724429e995a4a856c8c2, type: 3}
-  dimensions: {x: 8, y: 8, z: 8}
-  marchScale: {x: 2, y: 2, z: 2}
-  marchOffset: {x: 0, y: 0, z: 0}
+  _volumeCompute: {fileID: 7200000, guid: 03191df0a54a7ef4881f2bdc2d118a3a, type: 3}
+  _marchCompute: {fileID: 7200000, guid: be297152d264724429e995a4a856c8c2, type: 3}
+  _dimensions: {x: 8, y: 8, z: 8}
+  _marchScale: {x: 2, y: 2, z: 2}
+  _marchOffset: {x: 0, y: 0, z: 0}
 --- !u!23 &235699714
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -314,7 +314,7 @@ Transform:
   m_GameObject: {fileID: 235699711}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 7.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1308,13 +1308,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac7c6bc6d64e4f8468a9c0847b6aed85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraMovementSpeed: 1
-  cameraRotationSpeed: 1
-  cameraOffset: {x: 0, y: 1.5, z: -3}
-  cameraPivot: {x: 0, y: 0.5, z: 0}
-  targetPosition: {x: 0, y: 0, z: 0}
-  targetLook: {x: 0, y: 0, z: 0}
-  motionType: 0
+  _cameraMovementSpeed: 1
+  _cameraRotationSpeed: 1
+  _cameraOffset: {x: 0, y: 0, z: -3}
+  _cameraPivot: {x: 0, y: 0.5, z: 0}
+  Camera: {fileID: 0}
+  TargetPosition: {x: 0, y: 0, z: 0}
+  TargetLook: {x: 0, y: 0, z: 0}
+  Motion: 0
 --- !u!1 &967874714 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2143920106861234942, guid: f9992f97060b4bf458bb18f00c620c48, type: 3}
@@ -1384,6 +1385,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16ecf5633c5c8ee489e96e6b24f44e2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Strength: 10
+  Count: 4
 --- !u!23 &1067799844
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1971,6 +1974,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1282960734658124809, guid: e8a2d615a85ae1e4388e9e2c2e14f48f, type: 3}
       propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 963194229}
+    - target: {fileID: 1282960734658124809, guid: e8a2d615a85ae1e4388e9e2c2e14f48f, type: 3}
+      propertyPath: _playerCamera
       value: 
       objectReference: {fileID: 963194229}
     - target: {fileID: 1282960734658124811, guid: e8a2d615a85ae1e4388e9e2c2e14f48f, type: 3}

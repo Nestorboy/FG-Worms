@@ -3,14 +3,17 @@
 #include "Assets/Scripts/Terrain/Marching Table.cginc"
 #include "Assets/Scripts/Terrain/Marching Utils.cginc"
 
+struct Vertex
+{
+    float3 p;
+    float3 n;
+};
+
 struct Triangle
 {
-    float3 vertexC;
-    float3 vertexB;
-    float3 vertexA;
-    float3 normalC;
-    float3 normalB;
-    float3 normalA;
+    Vertex vertexC;
+    Vertex vertexB;
+    Vertex vertexA;
 };
 
 struct Cell
@@ -57,7 +60,7 @@ void MarchCubes(uint3 id : SV_DispatchThreadID)
     }
 
     //uint2 tri_data = TriangleTable[selector];
-    for (uint i = 0; i < 15; i += 3)
+    for (i = 0; i < 15; i += 3)
     {
         //uint e1 = EdgeIndexFromTriangleTable(tri_data, i);
         //uint e2 = EdgeIndexFromTriangleTable(tri_data, i + 1);
@@ -76,14 +79,14 @@ void MarchCubes(uint3 id : SV_DispatchThreadID)
         //WriteVertex(vidx + 2, vertices[e3], normals[e3]);
         //WriteIndices(vidx, uint3(vidx, vidx + 1, vidx + 2));
         Triangle tri;
+        
+        tri.vertexC.p = vertices[e1];
+        tri.vertexB.p = vertices[e2];
+        tri.vertexA.p = vertices[e3];
 
-        tri.vertexC = vertices[e1];
-        tri.vertexB = vertices[e2];
-        tri.vertexA = vertices[e3];
-
-        tri.normalC = normals[e1];
-        tri.normalB = normals[e2];
-        tri.normalA = normals[e3];
+        tri.vertexC.n = normals[e1];
+        tri.vertexB.n = normals[e2];
+        tri.vertexA.n = normals[e3];
         
         TriangleBuffer.Append(tri);
     }

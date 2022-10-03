@@ -21,64 +21,44 @@ namespace Terrain
         [SerializeField] private Vector3 _marchOffset = Vector3.zero;
         private float _marchIso = 0f;
 
+        private struct Vertex
+        {
+            public Vector3 P;
+            public Vector3 N;
+        }
+        
         private struct Triangle {
-#pragma warning disable 649
-            public Vector3 A;
-            public Vector3 B;
-            public Vector3 C;
+            public Vertex A;
+            public Vertex B;
+            public Vertex C;
 
-            public Vector3 N1;
-            public Vector3 N2;
-            public Vector3 N3;
-            
-            //public Vector3 this [int i] {
-            //    get {
-            //        switch (i) {
-            //            case 0:
-            //                return a;
-            //            case 1:
-            //                return b;
-            //            default:
-            //                return c;
-            //        }
-            //    }
-            //}
-
-            public Vector3 Vertex(int i)
-            {
-                switch (i)
-                {
-                    case 0:
-                        return A;
-                    case 1:
-                        return B;
-                    default:
-                        return C;
-                }
-            }
-            
-            public Vector3 Normal(int i)
-            {
-                switch (i)
-                {
-                    case 0:
-                        return N1;
-                    case 1:
-                        return N2;
-                    default:
-                        return N3;
+            public Vertex this [int i] {
+                get {
+                    switch (i) {
+                        case 0:
+                            return A;
+                        case 1:
+                            return B;
+                        default:
+                            return C;
+                    }
                 }
             }
         }
         
         void Awake()
         {
-            GenerateMesh();
+            //GenerateMesh();
         }
 
         private void Update()
         {
-            //GenerateMesh();
+            GenerateMesh();
+        }
+
+        private void OnDisable()
+        {
+            ReleaseBuffers();
         }
 
         private void AllocateBuffers()
@@ -89,7 +69,7 @@ namespace Terrain
             _marchMaxTris = _voxelCount * 5;
             
             _volumeBuffer = new ComputeBuffer(_voxelCount, sizeof(float));
-            _triangleBuffer = new ComputeBuffer(_marchMaxTris, sizeof(float) * 3 * 3 * 2, ComputeBufferType.Append); // 3 vertices and normals  per buffer.
+            _triangleBuffer = new ComputeBuffer(_marchMaxTris, sizeof(float) * 3 * 3 * 2, ComputeBufferType.Append); // 3 vertices (position and normal) per buffer.
             _counterBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
         }
         
@@ -128,9 +108,10 @@ namespace Terrain
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    triangles[i * 3 + j] = i * 3 + j;
-                    vertices[i * 3 + j] = tris[i].Vertex(j);
-                    normals[i * 3 + j] = tris[i].Normal(j);
+                    int id = i * 3 + j;
+                    triangles[id] = id;
+                    vertices[id] = tris[i][j].P;
+                    normals[id] = tris[i][j].N;
                 }
             }
 

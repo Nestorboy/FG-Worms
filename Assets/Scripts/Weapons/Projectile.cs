@@ -1,7 +1,10 @@
+using System;
+using UnityEngine;
+
 namespace Weapons
 {
-    public class Projectile
+    public abstract class Projectile : MonoBehaviour
     {
-        
+        public event Action onHit;
     }
 }
