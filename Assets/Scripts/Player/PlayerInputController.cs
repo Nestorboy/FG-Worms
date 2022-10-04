@@ -1,12 +1,10 @@
-using System.Numerics;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Visuals;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-namespace Input
+namespace Player
 {
     public class PlayerInputController : MonoBehaviour
     {
@@ -24,8 +22,6 @@ namespace Input
         private bool _isGrounded;
         
         private Animator _playerAnimator;
-        
-        #region Unity Events
         
         private void Awake()
         {
@@ -73,7 +69,10 @@ namespace Input
             _playerAnimator.SetFloat(AnimatorParameters.Velocity, _playerVelocity.magnitude * Time.fixedDeltaTime);
         }
 
-        #endregion Unity Events
+        public void ImpulseVelocity(Vector3 direction)
+        {
+            _playerVelocity += direction;
+        }
         
         public void Move(Vector2 direction)
         {

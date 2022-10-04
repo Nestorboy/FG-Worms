@@ -154,6 +154,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _explosionKnockback: 10
   _fuseDuration: 5
   _animator: {fileID: 0}
   _particles: {fileID: 0}

@@ -10,6 +10,7 @@ namespace Weapons
     {
         [SerializeField] private float _explosionRadius = 2f;
         [SerializeField] private AnimationCurve _explosionFalloff = AnimationCurve.Constant(0f, 1f, 1f);
+        [SerializeField] private float _explosionKnockback = 10f;
         [SerializeField] private float _fuseDuration = 5f;
         private float _fuseTime = 0f;
         private bool _fuseStarted;
@@ -50,11 +51,11 @@ namespace Weapons
             Animator = _animator;
             if (!_hasAnimator)
                 Animator = GetComponent<Animator>();
-
+            
             Particles = _particles;
             if (!_hasParticles)
                 Particles = GetComponentInChildren<ParticleSystem>();
-
+            
             _playerLayer = LayerMask.NameToLayer("Player");
             _playerColliders = new Collider[PlayerManager.Players.Length];
             
@@ -65,7 +66,7 @@ namespace Weapons
         {
             if (_hasAnimator)
                 Animator.SetTrigger(AnimatorParameters.Impact);
-
+            
             if (!_fuseStarted)
                 StartCoroutine(FuseStart());
             
@@ -76,22 +77,22 @@ namespace Weapons
         {
             if (!enabled || !gameObject.activeInHierarchy)
                 return;
-
+            
             Vector3 explosionPosition = transform.position;
             int playerCount = Physics.OverlapSphereNonAlloc(explosionPosition, _explosionRadius, _playerColliders, 1 << _playerLayer);
 
             for (int i = 0; i < playerCount; i++)
             {
                 Player.Player player = _playerColliders[i].GetComponent<Player.Player>();
-
                 
                 Vector3 closestPoint = _playerColliders[i].ClosestPoint(explosionPosition);
                 float distance = Vector3.Distance(explosionPosition, closestPoint);
                 float normalizedDistance = distance / _explosionRadius;
                 float strengthCoeff = _explosionFalloff.Evaluate(normalizedDistance);
-
-                Debug.Log($"{player} took {Strength * strengthCoeff} damage.");
-                player.Damage(Strength * strengthCoeff);
+                float finalStrength = Strength * strengthCoeff;
+                
+                player.InputController.ImpulseVelocity(Vector3.Normalize(closestPoint - explosionPosition) * (_explosionKnockback * strengthCoeff));
+                player.Damage(finalStrength);
             }
             
             Particles.Play();
