@@ -58,7 +58,8 @@ namespace Player
             }
             else if (_characterController.isGrounded)
             {
-                _playerVelocity = Vector3.zero;
+                Vector3 flatVelocity = Vector3.ProjectOnPlane(_playerVelocity, gravityDir);
+                _playerVelocity = flatVelocity * 0.9f;
             }
                 
             if (_targetDirection.sqrMagnitude > 0f)
