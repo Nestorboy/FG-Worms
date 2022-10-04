@@ -182,8 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb570ce38bf4083a39b33b83b1395f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InputController: {fileID: 0}
-  WeaponContainer: {fileID: 0}
+  InputController: {fileID: 8913767037953848998}
+  WeaponContainer: {fileID: 7371411210078199202}
   MaxHealth: 100
   Health: 100
 --- !u!114 &8913767037953848998
