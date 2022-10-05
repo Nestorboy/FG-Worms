@@ -10,7 +10,6 @@ namespace Weapons
     {
         [SerializeField] private float _explosionRadius = 2f;
         [SerializeField] private AnimationCurve _explosionFalloff = AnimationCurve.Constant(0f, 1f, 1f);
-        [SerializeField] private float _explosionKnockback = 10f;
         [SerializeField] private float _fuseDuration = 5f;
         private float _fuseTime = 0f;
         private bool _fuseStarted;
@@ -91,7 +90,7 @@ namespace Weapons
                 float strengthCoeff = _explosionFalloff.Evaluate(normalizedDistance);
                 float finalStrength = Strength * strengthCoeff;
                 
-                player.InputController.ImpulseVelocity(Vector3.Normalize(closestPoint - explosionPosition) * (_explosionKnockback * strengthCoeff));
+                player.InputController.ImpulseVelocity(Vector3.Normalize(closestPoint - explosionPosition) * (Knockback * strengthCoeff));
                 player.Damage(finalStrength);
             }
             

@@ -8,5 +8,6 @@ namespace Weapons
         public event Action onHit;
 
         public float Strength;
+        public float Knockback;
     }
 }

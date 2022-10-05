@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -6,11 +7,14 @@ namespace Weapons
 {
     public class RicochetBullet : Projectile
     {
-        [SerializeField] private float _speed = 5f;
-        [SerializeField] private float _knockback = 2f;
-        
+        [SerializeField] private float _speed = 20f;
+        [SerializeField] private float _maxDistance = 20f;
+        [SerializeField] private int _maxBounces = 5;
+
         private LineRenderer _line;
         private Vector3[] _positions = new Vector3[3];
+        private float _distanceTraveled = 0f;
+        private int _bounceCount = 0;
 
         private void Awake()
         {
@@ -19,45 +23,59 @@ namespace Weapons
             _line.positionCount = 3;
             for (int i = 0; i < _positions.Length; i++)
                 _positions[i] = transform.position;
+
+            StartCoroutine(BulletSweep(transform.position, transform.forward));
         }
 
-        private void FixedUpdate()
+        private bool _ => (_distanceTraveled < _maxDistance) && (_bounceCount < _maxBounces);
+        private WaitForFixedUpdate _waitForFixedUpdate;
+        private IEnumerator BulletSweep(Vector3 pos, Vector3 dir)
         {
-            float travelDistance = _speed * Time.fixedDeltaTime;
-            Vector3 rayPos = transform.position;
-            Vector3 rayDir = transform.forward;
-            int bounceCount = 0;
-
-            _positions[0] = rayPos;
-            while (travelDistance > 0f)
+            Vector3 rayPos = pos;
+            Vector3 rayDir = dir;
+            
+            for (;_;)
             {
-                float traveled;
-                if (Physics.Raycast(rayPos, rayDir, out RaycastHit hit, travelDistance))
+                float distanceToTravel = Mathf.Min(_speed * Time.fixedDeltaTime, _maxDistance - _distanceTraveled);
+                float distanceLeft = distanceToTravel;
+                while (distanceLeft > 0)
                 {
-                    if (bounceCount++ < 1)
-                        _positions[1] = hit.point;
+                    float traveled;
+                    if (Physics.Raycast(rayPos, rayDir, out RaycastHit hit, distanceLeft))
+                    {
+                        traveled = Vector3.Distance(rayPos, hit.point);
+                        
+                        Player.Player player;
+                        if (hit.transform.TryGetComponent(out player))
+                        {
+                            player.Damage(Strength * _bounceCount);
+                            float knockbackFalloff = Mathf.Clamp01(Vector3.Dot(rayDir, hit.normal));
+                            player.InputController.ImpulseVelocity(rayDir * (Knockback * knockbackFalloff));
+                        }
 
-                    traveled = Vector3.Distance(rayPos, hit.point);
-                    
-                    rayPos = hit.point;
-                    rayDir = Vector3.Reflect(rayDir, hit.normal);
-                }
-                else
-                {
-                    traveled = travelDistance;
+                        rayPos = hit.point;
+                        rayDir = Vector3.Reflect(rayDir, hit.normal);
+                        
+                        if (_bounceCount >= _maxBounces)
+                            break;
+                        _bounceCount++;
+                    }
+                    else
+                    {
+                        traveled = distanceLeft;
 
-                    _positions[1] = rayPos + rayDir * travelDistance * 0.5f;
-                    
-                    rayPos += rayDir * travelDistance;
+                        Vector3 travelVector = rayDir * distanceLeft;
+                        rayPos += travelVector;
+                    }
+
+                    _distanceTraveled += traveled;
+                    distanceLeft -= traveled;
                 }
                 
-                travelDistance -= traveled;
+                transform.SetPositionAndRotation(rayPos, Quaternion.LookRotation(rayDir));
+                
+                yield return _waitForFixedUpdate;
             }
-            
-            _positions[2] = rayPos;
-            
-            transform.SetPositionAndRotation(rayPos, Quaternion.LookRotation(rayDir));
-            _line.SetPositions(_positions);
         }
     }
 }
