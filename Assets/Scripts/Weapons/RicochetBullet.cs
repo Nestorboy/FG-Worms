@@ -10,20 +10,13 @@ namespace Weapons
         [SerializeField] private float _speed = 20f;
         [SerializeField] private float _maxDistance = 20f;
         [SerializeField] private int _maxBounces = 5;
+        [SerializeField] private AnimationCurve _bounceStrengthMultiplier = AnimationCurve.Linear(0f, 1f, 1f, 2f);
 
-        private LineRenderer _line;
-        private Vector3[] _positions = new Vector3[3];
         private float _distanceTraveled = 0f;
         private int _bounceCount = 0;
 
         private void Awake()
         {
-            _line = this.AddComponent<LineRenderer>();
-            _line.widthMultiplier = 0.01f;
-            _line.positionCount = 3;
-            for (int i = 0; i < _positions.Length; i++)
-                _positions[i] = transform.position;
-
             StartCoroutine(BulletSweep(transform.position, transform.forward));
         }
 
@@ -46,11 +39,12 @@ namespace Weapons
                         traveled = Vector3.Distance(rayPos, hit.point);
                         
                         Player.Player player;
-                        if (hit.transform.TryGetComponent(out player))
+                        if (hit.collider.TryGetComponent(out player))
                         {
-                            player.Damage(Strength * _bounceCount);
-                            float knockbackFalloff = Mathf.Clamp01(Vector3.Dot(rayDir, hit.normal));
-                            player.InputController.ImpulseVelocity(rayDir * (Knockback * knockbackFalloff));
+                            float bounceMultiplier = _bounceStrengthMultiplier.Evaluate((float)_bounceCount / _maxBounces);
+                            float knockbackFalloff = Mathf.Clamp01(Vector3.Dot(rayDir, -hit.normal));
+                            player.Damage(Strength * bounceMultiplier);
+                            player.InputController.ImpulseVelocity(rayDir * (Knockback * knockbackFalloff * bounceMultiplier));
                         }
 
                         rayPos = hit.point;

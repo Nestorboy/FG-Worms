@@ -45,7 +45,7 @@ namespace Player
                 
             if (_moveDirection.sqrMagnitude > 0f)
                 _targetDirection = moveVector;
-                
+
             //_playerVelocity.x = _moveDirection.x * playerMoveSpeed;
             //_playerVelocity.z = _moveDirection.y * playerMoveSpeed;
                 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Game;
 using UnityEngine;
 using Visuals;
 
@@ -56,7 +57,7 @@ namespace Weapons
                 Particles = GetComponentInChildren<ParticleSystem>();
             
             _playerLayer = LayerMask.NameToLayer("Player");
-            _playerColliders = new Collider[PlayerManager.Players.Length];
+            _playerColliders = new Collider[TeamManager.TotalPlayerCount];
             
             _terrainLayer = LayerMask.NameToLayer("Terrain");
         }

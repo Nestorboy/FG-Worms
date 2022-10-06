@@ -12,6 +12,7 @@ namespace Player
         [SerializeField] private Vector3 _cameraPivot;
 
         public Camera Camera;
+        public Player TargetPlayer;
         public Vector3 TargetPosition;
         public Vector3 TargetLook;
     
@@ -44,7 +45,7 @@ namespace Player
             _rotationOffsets.y = Mathf.Clamp(_rotationOffsets.y, -90f, 90f);
         
             Quaternion rotationOffset = Quaternion.Euler(_rotationOffsets.y, _rotationOffsets.x, 0);
-            Vector3 worldPivot = PlayerManager.ActivePlayer.transform.position + _cameraPivot;
+            Vector3 worldPivot = (TargetPlayer ? TargetPlayer.transform.position : Vector3.zero) + _cameraPivot;
 
             Quaternion newRot = _initialRotation * rotationOffset;
             Vector3 newPos;
@@ -60,19 +61,20 @@ namespace Player
             transform.SetPositionAndRotation(newPos, newRot);
         }
 
-        public void UpdateInitialValues()
+        public void SetTarget(Player player)
         {
-            _initialRotation = PlayerManager.ActivePlayer.transform.rotation;
+            TargetPlayer = player;
+            _initialRotation = player.transform.rotation;
             _rotationOffsets = new Vector2(0f, Vector3.SignedAngle(Vector3.forward, _cameraPivot - _cameraOffset, Vector3.right));
             Vector3 flatCameraVector = _cameraOffset - _cameraPivot;
             flatCameraVector.y = 0;
             flatCameraVector.Normalize();
-
+            
             _initialCameraDistance = (_cameraOffset - _cameraPivot).magnitude;
 
             _initialPosition = flatCameraVector * _initialCameraDistance;
         }
-    
+
         /// <summary>
         /// Computes the minimum radius of a sphere which perfectly encapsulates the cameras near clipping plane.
         /// </summary>

@@ -1,6 +1,6 @@
+using Game;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static PlayerManager;
 
 namespace Input
 {
@@ -24,11 +24,12 @@ namespace Input
         
         public void Move(InputAction.CallbackContext context)
         {
-            if (!ActivePlayer) return;
+            if (!TeamManager.ActivePlayer) return;
             
             InputMoveDirection = context.ReadValue<Vector2>();
             
-            ActivePlayer.InputController.Move(InputMoveDirection);
+            if (context.performed || context.canceled)
+                TeamManager.ActivePlayer.InputController.Move(InputMoveDirection);
         }
 
         public void Look(InputAction.CallbackContext context)
@@ -38,12 +39,12 @@ namespace Input
         
         public void Jump(InputAction.CallbackContext context)
         {
-            if (!ActivePlayer) return;
+            if (!TeamManager.ActivePlayer) return;
             
             if (!context.started) return;
             //print("Pressed: [Jump]");
             
-            ActivePlayer.InputController.Jump();
+            TeamManager.ActivePlayer.InputController.Jump();
         }
     }
 }

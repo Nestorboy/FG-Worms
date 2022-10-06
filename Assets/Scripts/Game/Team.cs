@@ -16,7 +16,25 @@ namespace Game
         public int CurrentPlayerIndex = -1;
 
         private int _alivePlayerCount;
-            
+        public bool IsDefeated;
+
+        public int AlivePlayerCount
+        {
+            get => _alivePlayerCount;
+            set
+            {
+                if (IsDefeated)
+                {
+                    if (value > 0)
+                        IsDefeated = false;
+                }
+                else if (value <= 0)
+                    IsDefeated = false;
+
+                _alivePlayerCount = value;
+            }
+        }
+        
         public int PlayerCount() => Players.Length;
 
         public float GetTeamHealth()
@@ -44,20 +62,21 @@ namespace Game
         public Player.Player NextPlayer(int index)
         {
             CurrentPlayerIndex = -1;
-            Player.Player player = null;
-            for (int i = 0; i < Players.Length; ++i)
+            int i = 1;
+            while (i < AlivePlayerCount)
             {
-                int newIndex = index + i % Players.Length;
-                Player.Player newPlayer = Players[newIndex];
-                if (newPlayer.IsAlive)
+                int nextIndex = (index + i) % Players.Length;
+                Player.Player nextPlayer = Players[nextIndex];
+                if (nextPlayer.IsAlive)
                 {
-                    CurrentPlayerIndex = newIndex;
-                    player = newPlayer;
-                    break;
+                    CurrentPlayerIndex = nextIndex;
+                    return nextPlayer;
                 }
+
+                i++;
             }
 
-            return player;
+            return null;
         }
 
         /// <summary>
@@ -69,9 +88,9 @@ namespace Game
         {
             Players[index] = player;
             if (player.IsAlive)
-                _alivePlayerCount++;
+                AlivePlayerCount++;
             
-            Renderer renderer = player.GetComponent<Renderer>();
+            Renderer renderer = player.GetComponentInChildren<Renderer>();
             MaterialPropertyBlock pb = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(pb);
             pb.SetColor(ShaderIDs.Color, Color);

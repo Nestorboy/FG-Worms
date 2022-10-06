@@ -13,11 +13,11 @@ namespace Player
         
         public float MaxHealth = 100f;
         public float Health = 100f;
-        
-        [NonSerialized] public Team Team;
-        
+
         private Renderer _renderer;
         private MaterialPropertyBlock _propBlock;
+
+        public Action<Player, float> onDamage;
         
         public float NormalizedHealth => Health / MaxHealth;
         
@@ -37,11 +37,13 @@ namespace Player
         public void Damage(float points)
         {
             Health -= points;
-        
+            
             if (Health < 0f)
                 Kill();
 
             UpdateVisuals();
+            
+            onDamage?.Invoke(this, points);
         }
     
         private void Kill()
