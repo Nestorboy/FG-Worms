@@ -55,7 +55,7 @@ namespace Game
                 newTeams[i].Players = new Player.Player[playerCount];
                 for (int j = 0; j < playerCount; j++)
                 {
-                    Vector3 spawnLocation = new Vector3(Random.Range(-10f, 10f), 0f, Random.Range(-10f, 10f));
+                    Vector3 spawnLocation = new Vector3(Random.Range(-7f, 7f), 0f, Random.Range(-7f, 7f));
                     Player.Player newPlayer = PlayerSpawnManager.GetInstance().SpawnPlayer(spawnLocation);
                     newTeams[i].SetPlayer(newPlayer, j);
                 }
@@ -115,7 +115,7 @@ namespace Game
         {
             int prevTeam = _currentTeamIndex;
             Team team = NextTeam();
-            Player.Player player = team.NextPlayer();
+            Player.Player player = team?.NextPlayer();
             if (_currentTeamIndex < 0)
             {
                 Debug.Log($"No team has won!");
