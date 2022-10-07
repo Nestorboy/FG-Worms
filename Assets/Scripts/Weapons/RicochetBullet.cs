@@ -70,6 +70,8 @@ namespace Weapons
                 
                 yield return _waitForFixedUpdate;
             }
+            
+            Destroy(gameObject);
         }
     }
 }

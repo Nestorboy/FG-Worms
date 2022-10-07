@@ -9,15 +9,17 @@ namespace Game
     [Serializable]
     public class Team
     {
-        public Color32 Color = UnityEngine.Color.black;
+        public Color32 TeamColor = UnityEngine.Color.black;
         public Player.Player[] Players;
         public Weapon[] Inventory;
 
         public int CurrentPlayerIndex = -1;
 
         private int _alivePlayerCount;
-        public bool IsDefeated;
+        public bool IsDefeated { get; private set; }
 
+        public Action<Team> OnDefeat;
+        
         public int AlivePlayerCount
         {
             get => _alivePlayerCount;
@@ -29,7 +31,10 @@ namespace Game
                         IsDefeated = false;
                 }
                 else if (value <= 0)
-                    IsDefeated = false;
+                {
+                    IsDefeated = true;
+                    OnDefeat?.Invoke(this);
+                }
 
                 _alivePlayerCount = value;
             }
@@ -61,9 +66,8 @@ namespace Game
         /// <returns></returns>
         public Player.Player NextPlayer(int index)
         {
-            CurrentPlayerIndex = -1;
             int i = 1;
-            while (i < AlivePlayerCount)
+            while (i <= Players.Length)
             {
                 int nextIndex = (index + i) % Players.Length;
                 Player.Player nextPlayer = Players[nextIndex];
@@ -76,6 +80,7 @@ namespace Game
                 i++;
             }
 
+            CurrentPlayerIndex = -1;
             return null;
         }
 
@@ -86,6 +91,8 @@ namespace Game
         /// <param name="index"></param>
         public void SetPlayer(Player.Player player, int index)
         {
+            player.OnDeath += OnPlayerDeath;
+            
             Players[index] = player;
             if (player.IsAlive)
                 AlivePlayerCount++;
@@ -93,8 +100,17 @@ namespace Game
             Renderer renderer = player.GetComponentInChildren<Renderer>();
             MaterialPropertyBlock pb = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(pb);
-            pb.SetColor(ShaderIDs.Color, Color);
+            Color.RGBToHSV(TeamColor, out float h, out float s, out float v);
+            pb.SetFloat(ShaderIDs.FluidHueOffset, h);
             renderer.SetPropertyBlock(pb);
+        }
+
+        private void OnPlayerDeath(Player.Player player)
+        {
+            AlivePlayerCount--;
+            
+            if (player == TeamManager.ActivePlayer)
+                TeamManager.NextTurn();
         }
     }
 }

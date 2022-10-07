@@ -10,17 +10,16 @@ namespace Game
 	public class GameManager : MonoBehaviour
 	{
 		[SerializeField] private PlayerCamera _playerCamera;
-		public Team[] Teams;
-		public Player.Player Player;
+
+		private void Awake()
+		{
+			TeamManager.PlayerCamera = _playerCamera;
+		}
 
 		private void Start()
 		{
-			TeamManager.InitializeTeams(Random.Range(2, 3), Random.Range(2, 4));
-			Team team = TeamManager.NextTeam();
-			Player.Player player = team.NextPlayer(); 
-			
-			//PlayerManager.NextPlayer();
-			_playerCamera.SetTarget(player);
+			TeamManager.InitializeTeams(Random.Range(2, 3), Random.Range(2, 5));
+			TeamManager.NextTurn();
 		}
 	
 		private void Update()
@@ -28,11 +27,7 @@ namespace Game
 			if (UnityEngine.Input.GetKeyDown(KeyCode.X))
 			{
 				print($"Pressed: [Next Turn]");
-				//PlayerManager.NextPlayer();
-				TeamManager.ActivePlayer.InputController.Move(Vector2.zero);
-				Team team = TeamManager.NextTeam();
-				Player.Player player = team.NextPlayer();
-				_playerCamera.SetTarget(player);
+				TeamManager.NextTurn();
 			}
 		}
 	}

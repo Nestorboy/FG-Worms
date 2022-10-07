@@ -8,8 +8,9 @@ namespace Game
 {
     public static class TeamManager
     {
+        public static PlayerCamera PlayerCamera;
+        
         private static int _currentTeamIndex = -1;
-        private static int _currentPlayerIndex = -1;
         private static int _teamsLeft = 0;
 
         public static Team[] Teams { get; private set; }
@@ -38,13 +39,19 @@ namespace Game
             
             teamCount = Math.Max(teamCount, 2);
             playerCount = Math.Max(playerCount, 1);
-			
+
+            float hueOffset = Random.Range(0f, 1f);
             Team[] newTeams = new Team[teamCount];
             for (int i = 0; i < teamCount; i++)
             {
                 newTeams[i] = new Team();
-                newTeams[i].Color = Color.HSVToRGB((float)i / teamCount, 1f, 1f);
-					
+                newTeams[i].TeamColor = Color.HSVToRGB((hueOffset + (float)i / teamCount) % 1, 1f, 1f);
+                
+                newTeams[i].OnDefeat += OnTeamDefeated;
+                
+                //newTeams[i].Inventory
+                //for (int j = 0; j < )
+                
                 newTeams[i].Players = new Player.Player[playerCount];
                 for (int j = 0; j < playerCount; j++)
                 {
@@ -70,10 +77,11 @@ namespace Game
             {
                 foreach (Player.Player player in team.Players)
                 {
-                    Object.Destroy(player);
+                    Object.Destroy(player.gameObject);
                 }
             }
 
+            _currentTeamIndex = -1;
             _teamsLeft = 0;
             Teams = null;
         }
@@ -85,9 +93,8 @@ namespace Game
         
         public static Team NextTeam(int index)
         {
-            _currentTeamIndex = -1;
             int i = 1;
-            while (i < _teamsLeft)
+            while (i <= Teams.Length)
             {
                 int nextIndex = (index + i) % Teams.Length;
                 Team nextTeam = Teams[nextIndex];
@@ -96,11 +103,43 @@ namespace Game
                     _currentTeamIndex = nextIndex;
                     return nextTeam;
                 }
-
+                
                 i++;
             }
 
+            _currentTeamIndex = -1;
             return null;
+        }
+
+        public static void NextTurn()
+        {
+            int prevTeam = _currentTeamIndex;
+            Team team = NextTeam();
+            Player.Player player = team.NextPlayer();
+            if (_currentTeamIndex < 0)
+            {
+                Debug.Log($"No team has won!");
+            }
+            else if ((prevTeam == _currentTeamIndex) || (_teamsLeft == 1))
+            {
+                Debug.Log($"Team {_currentTeamIndex + 1} has won!");
+            }
+            else
+            {
+                PlayerCamera.SetTarget(player);
+                return;
+            }
+            
+            InitializeTeams(Random.Range(2, 3), Random.Range(2, 4));
+            NextTurn();
+            //team = NextTeam();
+            //player = team.NextPlayer();
+            //PlayerCamera.SetTarget(player);
+        }
+        
+        private static void OnTeamDefeated(Team team)
+        {
+            _teamsLeft--;
         }
     }
 }

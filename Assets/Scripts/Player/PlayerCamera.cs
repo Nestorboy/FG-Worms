@@ -63,6 +63,7 @@ namespace Player
 
         public void SetTarget(Player player)
         {
+            TargetPlayer?.InputController.Move(Vector2.zero);
             TargetPlayer = player;
             _initialRotation = player.transform.rotation;
             _rotationOffsets = new Vector2(0f, Vector3.SignedAngle(Vector3.forward, _cameraPivot - _cameraOffset, Vector3.right));

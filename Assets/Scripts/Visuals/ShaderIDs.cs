@@ -5,6 +5,7 @@ namespace Visuals
     static class ShaderIDs
     {
         internal static readonly int Color = Shader.PropertyToID("_Color");
+        internal static readonly int FluidHueOffset = Shader.PropertyToID("_FluidHueOffset");
         internal static readonly int FluidHeight = Shader.PropertyToID("_FluidHeight");
         
         internal static readonly int Dimensions = Shader.PropertyToID("_Dimensions");

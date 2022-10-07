@@ -1,8 +1,7 @@
 using System;
-using Game;
-using Input;
 using UnityEngine;
 using Visuals;
+using Weapons;
 
 namespace Player
 {
@@ -13,12 +12,33 @@ namespace Player
         
         public float MaxHealth = 100f;
         public float Health = 100f;
-
+        
+        private bool _hasWeapon;
+        private Weapon _weapon;
+        
         private Renderer _renderer;
         private MaterialPropertyBlock _propBlock;
 
-        public Action<Player, float> onDamage;
-        
+        public Action<Player, float> OnDamage;
+        public Action<Player> OnDeath;
+
+        public bool HasWeapon => _hasWeapon;
+
+        public Weapon Weapon
+        {
+            get => _weapon;
+            set
+            {
+                if (HasWeapon)
+                    _weapon.transform.SetParent(null, false);
+                
+                _weapon = value;
+                _hasWeapon = value != null;
+                if (HasWeapon)
+                    _weapon.transform.SetParent(WeaponContainer, false);
+            }
+        }
+
         public float NormalizedHealth => Health / MaxHealth;
         
         public void Awake()
@@ -37,19 +57,24 @@ namespace Player
         public void Damage(float points)
         {
             Health -= points;
-            
             if (Health < 0f)
-                Kill();
+            {
+                Health = 0f;
+                if (IsAlive)
+                    Kill();
+            }
 
             UpdateVisuals();
-            
-            onDamage?.Invoke(this, points);
+
+            OnDamage?.Invoke(this, points);
         }
     
         private void Kill()
         {
             Health = 0f;
             IsAlive = false;
+            
+            OnDeath?.Invoke(this);
         }
 
         private void UpdateVisuals()

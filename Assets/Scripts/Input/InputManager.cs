@@ -46,5 +46,22 @@ namespace Input
             
             TeamManager.ActivePlayer.InputController.Jump();
         }
+
+        public void UsePrimary(InputAction.CallbackContext context)
+        {
+            if (TeamManager.ActivePlayer.HasWeapon)
+                TeamManager.ActivePlayer.Weapon.UsePrimary();
+        }
+
+        public void UseSecondary(InputAction.CallbackContext context)
+        {
+            if (TeamManager.ActivePlayer.HasWeapon)
+                TeamManager.ActivePlayer.Weapon.UseSecondary();
+        }
+
+        public void Inventory(InputAction.CallbackContext context)
+        {
+            Debug.Log(context.ReadValue<KeyCode>());
+        }
     }
 }
