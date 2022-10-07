@@ -21,7 +21,7 @@ namespace Game
 
 		private void Start()
 		{
-			TeamManager.InitializeTeams(Random.Range(2, 3), Random.Range(2, 5));
+			TeamManager.InitializeTeams(Random.Range(2, 5), Random.Range(2, 5));
 			TeamManager.NextTurn();
 		}
 	
