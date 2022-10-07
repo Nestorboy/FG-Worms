@@ -30,12 +30,18 @@ namespace Player
             set
             {
                 if (HasWeapon)
+                {
                     _weapon.transform.SetParent(null, false);
-                
+                    _weapon.gameObject.SetActive(false);
+                }
+
                 _weapon = value;
                 _hasWeapon = value != null;
                 if (HasWeapon)
+                {
                     _weapon.transform.SetParent(WeaponContainer, false);
+                    _weapon.gameObject.SetActive(true);
+                }
             }
         }
 

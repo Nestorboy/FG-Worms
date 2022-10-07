@@ -105,6 +105,10 @@ namespace Weapons
             yield return StartCoroutine(TimerStart());
 
             Explode();
+            
+            yield return StartCoroutine(WaitForParticle());
+            
+            Destroy(gameObject);
         }
         
         private bool w => _fuseTime < _fuseDuration;
@@ -126,6 +130,17 @@ namespace Weapons
             _fuseTime = _fuseDuration;
         }
 
+        private IEnumerator WaitForParticle()
+        {
+            if (_hasParticles)
+            {
+                for (;_particles.IsAlive(true);)
+                {
+                    yield return null;
+                }
+            }
+        }
+        
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.black;

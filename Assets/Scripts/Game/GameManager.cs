@@ -11,8 +11,11 @@ namespace Game
 	{
 		[SerializeField] private PlayerCamera _playerCamera;
 
+		[SerializeField] public Weapons.Weapon[] Weapons;
+		
 		private void Awake()
 		{
+			TeamManager.GameManager = this;
 			TeamManager.PlayerCamera = _playerCamera;
 		}
 

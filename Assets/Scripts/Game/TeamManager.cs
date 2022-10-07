@@ -1,6 +1,7 @@
 using System;
 using Player;
 using UnityEngine;
+using Weapons;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -9,6 +10,7 @@ namespace Game
     public static class TeamManager
     {
         public static PlayerCamera PlayerCamera;
+        public static GameManager GameManager;
         
         private static int _currentTeamIndex = -1;
         private static int _teamsLeft = 0;
@@ -16,19 +18,27 @@ namespace Game
         public static Team[] Teams { get; private set; }
         public static int TotalPlayerCount { get; private set; }
 
-        public static Player.Player ActivePlayer
+        public static Team ActiveTeam
         {
             get
             {
                 if ((Teams?.Length > 0) && (_currentTeamIndex > -1))
+                    return Teams[_currentTeamIndex];
+
+                return null;
+            }
+        }
+        
+        public static Player.Player ActivePlayer
+        {
+            get
+            {
+                Team activeTeam = ActiveTeam;
+                if ((activeTeam != null) && (activeTeam.Players?.Length > 0) && (activeTeam.CurrentPlayerIndex > -1)) 
                 {
-                    Team activeTeam = Teams[_currentTeamIndex];
-                    if ((activeTeam != null) && (activeTeam.Players?.Length > 0) && (activeTeam.CurrentPlayerIndex > -1))
-                    {
-                        return activeTeam.Players[activeTeam.CurrentPlayerIndex];
-                    }
+                    return activeTeam.Players[activeTeam.CurrentPlayerIndex];
                 }
-                
+
                 return null;
             }
         }
@@ -48,9 +58,15 @@ namespace Game
                 newTeams[i].TeamColor = Color.HSVToRGB((hueOffset + (float)i / teamCount) % 1, 1f, 1f);
                 
                 newTeams[i].OnDefeat += OnTeamDefeated;
-                
-                //newTeams[i].Inventory
-                //for (int j = 0; j < )
+
+                Weapon[] newInventory = new Weapon[GameManager.Weapons.Length];
+                for (int j = 0; j < newInventory.Length; j++)
+                {
+                    GameObject weaponGO = Object.Instantiate(GameManager.Weapons[j].gameObject);
+                    weaponGO.SetActive(false);
+                    newInventory[j] = weaponGO.GetComponent<Weapon>();
+                }
+                newTeams[i].Inventory = newInventory;
                 
                 newTeams[i].Players = new Player.Player[playerCount];
                 for (int j = 0; j < playerCount; j++)

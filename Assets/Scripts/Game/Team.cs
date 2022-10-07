@@ -9,7 +9,7 @@ namespace Game
     [Serializable]
     public class Team
     {
-        public Color32 TeamColor = UnityEngine.Color.black;
+        public Color32 TeamColor = Color.black;
         public Player.Player[] Players;
         public Weapon[] Inventory;
 
@@ -100,11 +100,19 @@ namespace Game
             Renderer renderer = player.GetComponentInChildren<Renderer>();
             MaterialPropertyBlock pb = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(pb);
-            Color.RGBToHSV(TeamColor, out float h, out float s, out float v);
+            Color.RGBToHSV(TeamColor, out float h, out float _, out float _);
             pb.SetFloat(ShaderIDs.FluidHueOffset, h);
             renderer.SetPropertyBlock(pb);
         }
 
+        public Weapon GetWeapon(int index)
+        {
+            if (index >= 0 && index < Inventory.Length)
+                return Inventory[index];
+            
+            return null;
+        }
+        
         private void OnPlayerDeath(Player.Player player)
         {
             AlivePlayerCount--;

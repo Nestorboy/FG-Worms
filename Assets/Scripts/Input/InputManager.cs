@@ -1,6 +1,7 @@
 using Game;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace Input
 {
@@ -39,9 +40,8 @@ namespace Input
         
         public void Jump(InputAction.CallbackContext context)
         {
-            if (!TeamManager.ActivePlayer) return;
-            
-            if (!context.started) return;
+            if (!TeamManager.ActivePlayer || !context.started) return;
+
             //print("Pressed: [Jump]");
             
             TeamManager.ActivePlayer.InputController.Jump();
@@ -49,19 +49,37 @@ namespace Input
 
         public void UsePrimary(InputAction.CallbackContext context)
         {
+            if (!TeamManager.ActivePlayer || !context.started) return;
+
             if (TeamManager.ActivePlayer.HasWeapon)
                 TeamManager.ActivePlayer.Weapon.UsePrimary();
         }
 
         public void UseSecondary(InputAction.CallbackContext context)
         {
+            if (!TeamManager.ActivePlayer || !context.started) return;
+
             if (TeamManager.ActivePlayer.HasWeapon)
                 TeamManager.ActivePlayer.Weapon.UseSecondary();
         }
 
         public void Inventory(InputAction.CallbackContext context)
         {
-            Debug.Log(context.ReadValue<KeyCode>());
+            if (!TeamManager.ActivePlayer || !context.started) return;
+
+            TeamManager.ActivePlayer.Weapon = TeamManager.ActiveTeam.GetWeapon(GetPressedNumber() - 1);
+            Debug.Log(TeamManager.ActivePlayer.Weapon);
         }
+        
+        public int GetPressedNumber() {
+            for (int number = 0; number <= 9; number++)
+            {
+                if (UnityEngine.Input.GetKeyDown(number.ToString()))
+                    return number;
+            }
+     
+            return -1;
+        }
+
     }
 }

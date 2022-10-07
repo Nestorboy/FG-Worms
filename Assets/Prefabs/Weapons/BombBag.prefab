@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3084491581922385492
+--- !u!1 &2366461971325873055
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3084491581922385488}
-  - component: {fileID: 3084491581922385491}
-  - component: {fileID: 3084491581922385490}
-  - component: {fileID: 3084491581922385493}
+  - component: {fileID: 5790281823437501180}
+  - component: {fileID: 8776734656590815390}
+  - component: {fileID: 5517869060876325009}
+  - component: {fileID: 1924919473423651735}
   m_Layer: 0
-  m_Name: Rifle
+  m_Name: BombBag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3084491581922385488
+--- !u!4 &5790281823437501180
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3084491581922385492}
+  m_GameObject: {fileID: 2366461971325873055}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.5}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3084491582284027179}
+  - {fileID: 4512705662216621835}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3084491581922385491
+--- !u!33 &8776734656590815390
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3084491581922385492}
+  m_GameObject: {fileID: 2366461971325873055}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &3084491581922385490
+--- !u!23 &5517869060876325009
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3084491581922385492}
+  m_GameObject: {fileID: 2366461971325873055}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -85,23 +85,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3084491581922385493
+--- !u!114 &1924919473423651735
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3084491581922385492}
+  m_GameObject: {fileID: 2366461971325873055}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16ecf5633c5c8ee489e96e6b24f44e2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Strength: 10
+  Strength: 20
   Count: 10
-  _projectileOrigin: {fileID: 3084491582284027179}
-  _projectilePrefab: {fileID: 7061022764476634698, guid: 39dce44ddbbc19340884c15d2d951922, type: 3}
---- !u!1 &3084491582284027178
+  _projectileOrigin: {fileID: 4512705662216621835}
+  _projectilePrefab: {fileID: 6679051924673283, guid: ad08b10a3fbb4e14b9580c12c7ca3846, type: 3}
+--- !u!1 &3253809424216208643
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,26 +109,26 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3084491582284027179}
+  - component: {fileID: 4512705662216621835}
   m_Layer: 0
-  m_Name: Nozzle
+  m_Name: Origin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3084491582284027179
+--- !u!4 &4512705662216621835
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3084491582284027178}
+  m_GameObject: {fileID: 3253809424216208643}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3084491581922385488}
+  m_Father: {fileID: 5790281823437501180}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
